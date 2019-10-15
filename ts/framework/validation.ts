@@ -2,6 +2,7 @@
  * Validation utility classes.
  */
 import Configuration from "./configuration";
+import KaRecaptcha from "../components/ka-recaptcha";
 
 export default class Validation {
 
@@ -46,6 +47,34 @@ export default class Validation {
     }
 
 
+    /**
+     * Validate recaptcha field
+     *
+     * @param containingElement
+     * @param message
+     */
+    static validateRecaptcha(containingElement: Element, message: string) {
+
+        let recaptchas = containingElement.getElementsByTagName("ka-recaptcha");
+        if (recaptchas.length > 0) {
+
+            let recaptcha = <KaRecaptcha>recaptchas.item(0);
+
+            let valid = recaptcha.getResponse() ? true : false;
+
+            if (!valid) {
+                this.setFieldError(containingElement, "recaptcha", true, message);
+            }
+
+            return valid;
+        } else {
+            return true;
+        }
+
+
+    }
+
+
     // Set a field error (visibility and message).
     static setFieldError(containingElement: Element, identifier: string, visible: boolean, message: string) {
         let element: HTMLElement = containingElement.querySelector("[data-" + identifier + "-error]");
@@ -54,4 +83,6 @@ export default class Validation {
             Configuration.elementVisibilityFunction(element, visible);
         }
     }
+
+
 }

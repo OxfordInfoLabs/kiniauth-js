@@ -10,6 +10,8 @@ export default class Configuration {
 
     private static _endpoint: string;
 
+    private static _recaptchaKey: string;
+
 
     static get elementVisibilityFunction(): (element: HTMLElement, visible: boolean) => void {
         return this._elementVisibilityFunction;
@@ -26,5 +28,14 @@ export default class Configuration {
 
     static set endpoint(value: string) {
         this._endpoint = value;
+    }
+
+
+    static get recaptchaKey(): string {
+        return this._recaptchaKey;
+    }
+
+    static set recaptchaKey(value: string) {
+        this._recaptchaKey = value;
     }
 }
