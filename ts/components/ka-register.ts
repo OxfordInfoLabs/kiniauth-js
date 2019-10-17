@@ -70,7 +70,7 @@ export default class KaRegister extends HTMLElement {
 
                     // If we get a successful response, forward to the activation URL.
                     if (response.ok) {
-                        window.location.href = this.activationUrl;
+                        window.location.href = this.activationUrl + "?successUrl=" + this.successUrl;
                     } else {
                         response.json().then((json) => {
                             if (json.validationErrors) {

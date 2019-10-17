@@ -45,6 +45,16 @@ export default class Api {
 
 
     /**
+     * Activate an account using a code
+     *
+     * @param activationCode
+     */
+    public activateAccount(activationCode) {
+        return this.callAPI(Configuration.endpoint + "/guest/registration/activate/" + activationCode);
+    }
+
+
+    /**
      * Call an API using fetch
      *
      * @param url

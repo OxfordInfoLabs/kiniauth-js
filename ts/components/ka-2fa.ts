@@ -27,7 +27,7 @@ export default class Ka2fa extends HTMLElement {
         this.querySelector("[data-2fa]").addEventListener("submit", (event) => {
             event.preventDefault();
 
-            Validation.resetFields(this, ["2fa", "general"]);
+            Validation.resetFields(this, ["2fa"]);
 
             if (this.validate()) {
 
@@ -48,14 +48,14 @@ export default class Ka2fa extends HTMLElement {
                                 var signinSuccessURL = RequestParams.get().signinSuccessURL ? RequestParams.get().signinSuccessURL : "/";
                                 window.location.href = signinSuccessURL;
                             } else {
-                                Validation.setFieldError(this, "general", true, "Invalid 2FA code supplied");
+                                Validation.setFieldError(this, "2fa", true, "Invalid 2FA code supplied");
                             }
                         });
 
 
                     } else {
                         response.json().then((json) => {
-                            Validation.setFieldError(this, "general", true, json.message);
+                            Validation.setFieldError(this, "2fa", true, json.message);
                         });
                     }
                 });

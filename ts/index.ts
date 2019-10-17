@@ -6,6 +6,7 @@ import Configuration from "./framework/configuration";
 import Ka2fa from "./components/ka-2fa";
 import KaRecaptcha from "./components/ka-recaptcha";
 import KaRegister from "./components/ka-register";
+import KaActivate from "./components/ka-activate";
 
 export default class Kiniauth {
 
@@ -30,6 +31,7 @@ export default class Kiniauth {
         customElements.define('ka-signin', KaSignin);
         customElements.define("ka-2fa", Ka2fa);
         customElements.define("ka-register", KaRegister);
+        customElements.define("ka-activate", KaActivate);
     }
 
 }
