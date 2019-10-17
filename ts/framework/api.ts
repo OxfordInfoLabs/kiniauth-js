@@ -29,6 +29,22 @@ export default class Api {
 
 
     /**
+     * Create a new account
+     *
+     * @param emailAddress
+     * @param accountName
+     * @param password
+     */
+    public createNewAccount(emailAddress, accountName, password) {
+        return this.callAPI(Configuration.endpoint + "/guest/registration/create", {
+            emailAddress: emailAddress,
+            accountName: accountName,
+            password: password
+        }, "POST");
+    }
+
+
+    /**
      * Call an API using fetch
      *
      * @param url
@@ -37,10 +53,16 @@ export default class Api {
      */
     private callAPI(url: string, params: any = {}, method: string = "GET") {
 
-        return fetch(url, {
+        var obj: any = {
             method: method,
             credentials: "include"
-        });
+        };
+
+        if (method != "GET") {
+            obj.body = JSON.stringify(params);
+        }
+
+        return fetch(url, obj);
 
     }
 

@@ -28,6 +28,14 @@ export default class KaRecaptcha extends HTMLElement {
 
             if (KaRecaptcha.instanceIndex == 1)
                 this.loadScript();
+
+
+
+            // Render immediately if autoshow
+            if (this.hasAttribute("data-autoshow")){
+                this.render();
+            }
+
         } else {
             alert("You need to configure a recaptcha key to use the ka-recaptcha component");
         }
@@ -47,6 +55,7 @@ export default class KaRecaptcha extends HTMLElement {
                 setTimeout(() => {
                     this.render()
                 }, 500);
+                return;
             } else {
                 window["grecaptcha"].render(this.instanceId, {
                     'sitekey': Configuration.recaptchaKey

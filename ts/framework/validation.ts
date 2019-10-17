@@ -34,7 +34,15 @@ export default class Validation {
         Object.keys(identifiers).forEach((item) => {
             var element: Element = containingElement.querySelector("[data-" + item + "-field]");
             if (element instanceof HTMLInputElement) {
-                let elementValid: boolean = (element.value != null && element.value.length > 0);
+
+                let elementValid: boolean;
+
+                if (element.type == "checkbox") {
+                    elementValid = element.checked;
+                } else {
+                    elementValid = (element.value != null && element.value.length > 0);
+                }
+
                 if (!elementValid) {
                     this.setFieldError(containingElement, item, true, identifiers[item]);
                 }
@@ -44,6 +52,39 @@ export default class Validation {
 
         return valid;
 
+    }
+
+
+    /**
+     * Validate password fields
+     *
+     * @param containingElement
+     * @param identifiers
+     */
+    static validatePasswordFields(containingElement: Element, identifiers: any) {
+        let valid: boolean = true;
+
+        Object.keys(identifiers).forEach((item) => {
+            var element: Element = containingElement.querySelector("[data-" + item + "-field]");
+
+            if (element instanceof HTMLInputElement) {
+
+                let value = element.value;
+
+                let elementValid = value.match(/[A-Z]/) && value.match(/[a-z]/) &&
+                    value.match(/[0-9]/) && value.length >= 8;
+
+                if (!elementValid) {
+                    this.setFieldError(containingElement, item, true, identifiers[item]);
+                }
+
+                valid = valid && elementValid;
+
+            }
+
+        });
+
+        return valid;
     }
 
 
