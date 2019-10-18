@@ -1,8 +1,9 @@
 /**
  * Validation utility classes.
  */
-import Configuration from "./configuration";
+import Configuration from "../configuration";
 import KaRecaptcha from "../components/ka-recaptcha";
+import FieldValue from "../util/field-value";
 
 export default class Validation {
 
@@ -83,6 +84,30 @@ export default class Validation {
             }
 
         });
+
+        return valid;
+    }
+
+
+    /**
+     * Validate a field equalling another field
+     *
+     * @param containingElement
+     * @param field
+     * @param otherField
+     * @param message
+     */
+    static validateEqualsFields(containingElement: Element, field: string, otherField: string, message: string) {
+
+
+        let fieldElement: HTMLElement = containingElement.querySelector("[data-" + field + "-field]");
+        let otherFieldElement: HTMLElement = containingElement.querySelector("[data-" + otherField + "-field]");
+
+        let fieldValue = FieldValue.get(fieldElement);
+        let valid: boolean = fieldValue == FieldValue.get(otherFieldElement);
+
+        if (!valid)
+            this.setFieldError(containingElement, field, true, message);
 
         return valid;
     }

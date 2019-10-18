@@ -1,7 +1,7 @@
 /**
  * Recaptcha component if being used.
  */
-import Configuration from "../framework/configuration";
+import Configuration from "../configuration";
 
 export default class KaRecaptcha extends HTMLElement {
 
@@ -30,9 +30,8 @@ export default class KaRecaptcha extends HTMLElement {
                 this.loadScript();
 
 
-
             // Render immediately if autoshow
-            if (this.hasAttribute("data-autoshow")){
+            if (this.hasAttribute("data-autoshow")) {
                 this.render();
             }
 
@@ -64,10 +63,25 @@ export default class KaRecaptcha extends HTMLElement {
 
             this.rendered = true;
         } else {
-            window["grecaptcha"].reset();
+            this.reset();
         }
     }
 
+
+    /**
+     * Reset the captcha
+     */
+    public reset() {
+        window["grecaptcha"].reset();
+    }
+
+
+    /**
+     * Return a boolean indicating whether or not this captcha has been rendered
+     */
+    public isRendered() {
+        return this.rendered;
+    }
 
     /**
      * Check whether or not this recaptcha is completed.

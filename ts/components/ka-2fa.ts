@@ -1,84 +1,47 @@
 import Validation from "../framework/validation";
-import ElementSpinner from "../framework/element-spinner";
-import Configuration from "../framework/configuration";
-import RequestParams from "../framework/request-params";
+import ElementSpinner from "../util/element-spinner";
+import RequestParams from "../util/request-params";
 import Api from "../framework/api";
+import StandardForm from "./standard-form";
 
 /**
  * Two factor authentication JS widget
  */
-export default class Ka2fa extends HTMLElement {
-
+export default class Ka2fa extends StandardForm {
 
     /**
      * Construct new element
      */
     constructor() {
-        super();
-        this.bind();
-    }
-
-
-    /**
-     * Bind method
-     */
-    private bind() {
-        // Pick up sign in events.
-        this.querySelector("[data-2fa]").addEventListener("submit", (event) => {
-            event.preventDefault();
-
-            Validation.resetFields(this, ["2fa"]);
-
-            if (this.validate()) {
-
-                var twoFA: HTMLInputElement = this.querySelector("[data-2fa-field]");
-
-                // Grab submit button
-                var submitButton: HTMLButtonElement = this.querySelector("[type='submit']");
-                ElementSpinner.spinElement(submitButton);
-
-                let api = new Api();
-
-                api.twoFactor(twoFA.value).then((response) => {
-                    ElementSpinner.restoreElement(submitButton);
-                    if (response.ok) {
-
-                        response.json().then((success) => {
-                            if (success) {
-                                var signinSuccessURL = RequestParams.get().signinSuccessURL ? RequestParams.get().signinSuccessURL : "/";
-                                window.location.href = signinSuccessURL;
-                            } else {
-                                Validation.setFieldError(this, "2fa", true, "Invalid 2FA code supplied");
-                            }
-                        });
-
-
-                    } else {
-                        response.json().then((json) => {
-                            Validation.setFieldError(this, "2fa", true, json.message);
-                        });
-                    }
-                });
-
-
+        super({
+            "2fa": {
+                "required": "A 2FA code is required"
             }
-
-
         });
-
     }
 
 
-    /**
-     * Validate method
-     */
-    private validate() {
-
-        return Validation.validateRequiredFields(this, {
-            "2fa": "A 2FA authentication code is required"
-        });
-
+    public submitForm(fieldValues: any): Promise<any> {
+        let api = new Api();
+        return api.twoFactor(fieldValues["2fa"]);
     }
 
+
+
+    public success(jsonResponse: any) {
+
+        // Expect a boolean from this
+        if (jsonResponse) {
+            var signinSuccessURL = RequestParams.get().signinSuccessURL ? RequestParams.get().signinSuccessURL : "/";
+            window.location.href = signinSuccessURL;
+        } else {
+            Validation.setFieldError(this, "2fa", true, "Invalid 2FA code supplied");
+        }
+    }
+
+
+    public failure(jsonResponse: any) {
+        Validation.setFieldError(this, "2fa", true, jsonResponse.message);
+    }
 
 }

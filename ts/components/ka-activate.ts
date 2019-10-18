@@ -1,80 +1,51 @@
 import Validation from "../framework/validation";
-import ElementSpinner from "../framework/element-spinner";
+import ElementSpinner from "../util/element-spinner";
 import Api from "../framework/api";
-import RequestParams from "../framework/request-params";
+import RequestParams from "../util/request-params";
+import KaRecaptcha from "./ka-recaptcha";
+import StandardForm from "./standard-form";
 
 /**
  * Account activation component.
  */
-export default class KaActivate extends HTMLElement {
+export default class KaActivate extends StandardForm {
 
     // Store success url
     private successUrl;
 
     constructor() {
-        super();
-        this.bind();
-    }
-
-
-    /**
-     * Bind method
-     */
-    private bind() {
+        super({
+            "code": {
+                "required": "An activation code is required"
+            }
+        });
 
         // Resolve the success url, prioritising a passed request param, falling back to a data attribute or /
         this.successUrl = RequestParams.get().successUrl ? RequestParams.get().successUrl : (
             this.getAttribute("data-success-url") ? this.getAttribute("data-success-url") : "/");
 
 
-        // Pick up sign in events.
-        this.querySelector("[data-activate]").addEventListener("submit", (event) => {
-            event.preventDefault();
+    }
 
-            Validation.resetFields(this, ["code"]);
+    // Submit the form
+    public submitForm(fieldValues): Promise<any> {
+        let api = new Api();
+        return api.activateAccount(fieldValues.code);
+    }
 
-            if (this.validate()) {
+    // Success behaviour
+    public success(jsonResponse) {
+        window.location.href = this.successUrl;
+    }
 
-                var code: HTMLInputElement = this.querySelector("[data-code-field]");
+    // Failure behaviour
+    public failure(jsonResponse) {
 
-                // Grab submit button
-                var submitButton: HTMLButtonElement = this.querySelector("[type='submit']");
-                ElementSpinner.spinElement(submitButton);
-
-                let api = new Api();
-
-                api.activateAccount(code.value).then((response) => {
-                    ElementSpinner.restoreElement(submitButton);
-                    if (response.ok) {
-                        window.location.href = this.successUrl;
-                    } else {
-                        response.json().then((json) => {
-
-                            let message = json.validationErrors ? json.validationErrors.activationCode.errorMessage : json.message;
-
-                            Validation.setFieldError(this, "code", true, message);
-                        });
-                    }
-                });
-
-
-            }
-
-
-        });
+        let message = jsonResponse.validationErrors ? jsonResponse.validationErrors.activationCode.errorMessage : jsonResponse.message;
+        Validation.setFieldError(this, "code", true, message);
 
     }
 
 
-    /**
-     * Validate method
-     */
-    private validate() {
-
-        return Validation.validateRequiredFields(this, {
-            "2fa": "A 2FA authentication code is required"
-        });
-
-    }
 
 }

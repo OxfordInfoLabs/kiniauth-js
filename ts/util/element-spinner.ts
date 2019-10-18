@@ -1,7 +1,7 @@
 /**
  * Element spinner.
  */
-import Configuration from "./configuration";
+import Configuration from "../configuration";
 
 export default class ElementSpinner {
 

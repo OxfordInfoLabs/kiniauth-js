@@ -1,4 +1,4 @@
-import Configuration from "./configuration";
+import Configuration from "../configuration";
 
 /**
  * API methods for accessing backend via fetch
@@ -14,7 +14,7 @@ export default class Api {
      * @return Promise
      */
     public login(emailAddress, password) {
-        return this.callAPI(Configuration.endpoint + "/guest/auth/login?emailAddress=" + emailAddress + "&password=" + password);
+        return this.callAPI("/guest/auth/login?emailAddress=" + emailAddress + "&password=" + password);
     }
 
 
@@ -24,7 +24,7 @@ export default class Api {
      * @param code
      */
     public twoFactor(code) {
-        return this.callAPI(Configuration.endpoint + "/guest/auth/twoFactor?code=" + code);
+        return this.callAPI("/guest/auth/twoFactor?code=" + code);
     }
 
 
@@ -36,7 +36,7 @@ export default class Api {
      * @param password
      */
     public createNewAccount(emailAddress, accountName, password) {
-        return this.callAPI(Configuration.endpoint + "/guest/registration/create", {
+        return this.callAPI("/guest/registration/create", {
             emailAddress: emailAddress,
             accountName: accountName,
             password: password
@@ -50,9 +50,29 @@ export default class Api {
      * @param activationCode
      */
     public activateAccount(activationCode) {
-        return this.callAPI(Configuration.endpoint + "/guest/registration/activate/" + activationCode);
+        return this.callAPI("/guest/registration/activate/" + activationCode);
     }
 
+
+    /**
+     * Request a password reset
+     *
+     * @param emailAddress
+     */
+    public requestPasswordReset(emailAddress) {
+        return this.callAPI("/guest/auth/passwordReset?emailAddress=" + emailAddress);
+    }
+
+
+    /**
+     * Reset the password using a reset code.
+     *
+     * @param newPassword
+     * @param resetCode
+     */
+    public resetPassword(newPassword, resetCode) {
+        return this.callAPI("/guest/auth/passwordReset", {newPassword: newPassword, resetCode: resetCode}, "POST");
+    }
 
     /**
      * Call an API using fetch
@@ -62,6 +82,8 @@ export default class Api {
      * @param method
      */
     private callAPI(url: string, params: any = {}, method: string = "GET") {
+
+        url = Configuration.endpoint + url;
 
         var obj: any = {
             method: method,
