@@ -1,4 +1,4 @@
-import Configuration from "../configuration";
+import Configuration from '../configuration';
 
 /**
  * API methods for accessing backend via fetch
@@ -14,7 +14,7 @@ export default class Api {
      * @return Promise
      */
     public login(emailAddress, password) {
-        return this.callAPI("/guest/auth/login?emailAddress=" + emailAddress + "&password=" + password);
+        return this.callAPI('/guest/auth/login?emailAddress=' + emailAddress + '&password=' + password);
     }
 
 
@@ -24,7 +24,7 @@ export default class Api {
      * @param code
      */
     public twoFactor(code) {
-        return this.callAPI("/guest/auth/twoFactor?code=" + code);
+        return this.callAPI('/guest/auth/twoFactor?code=' + code);
     }
 
 
@@ -36,11 +36,11 @@ export default class Api {
      * @param password
      */
     public createNewAccount(emailAddress, accountName, password) {
-        return this.callAPI("/guest/registration/create", {
+        return this.callAPI('/guest/registration/create', {
             emailAddress: emailAddress,
             accountName: accountName,
             password: password
-        }, "POST");
+        }, 'POST');
     }
 
 
@@ -50,7 +50,7 @@ export default class Api {
      * @param activationCode
      */
     public activateAccount(activationCode) {
-        return this.callAPI("/guest/registration/activate/" + activationCode);
+        return this.callAPI('/guest/registration/activate/' + activationCode);
     }
 
 
@@ -60,7 +60,7 @@ export default class Api {
      * @param emailAddress
      */
     public requestPasswordReset(emailAddress) {
-        return this.callAPI("/guest/auth/passwordReset?emailAddress=" + emailAddress);
+        return this.callAPI('/guest/auth/passwordReset?emailAddress=' + emailAddress);
     }
 
 
@@ -71,7 +71,23 @@ export default class Api {
      * @param resetCode
      */
     public resetPassword(newPassword, resetCode) {
-        return this.callAPI("/guest/auth/passwordReset", {newPassword: newPassword, resetCode: resetCode}, "POST");
+        return this.callAPI('/guest/auth/passwordReset', { newPassword: newPassword, resetCode: resetCode }, 'POST');
+    }
+
+    public getSessionData() {
+        return this.callAPI('/guest/session')
+            .then((response) => {
+                if (response.ok) {
+                    return response.text().then(function (text) {
+                        return text ? JSON.parse(text) : {}
+                    })
+                } else {
+                    throw new Error(response.statusText);
+                }
+            })
+            .then((data) => {
+                return data;
+            });
     }
 
     /**
@@ -81,16 +97,16 @@ export default class Api {
      * @param params
      * @param method
      */
-    private callAPI(url: string, params: any = {}, method: string = "GET") {
+    private callAPI(url: string, params: any = {}, method: string = 'GET') {
 
         url = Configuration.endpoint + url;
 
         var obj: any = {
             method: method,
-            credentials: "include"
+            credentials: 'include'
         };
 
-        if (method != "GET") {
+        if (method != 'GET') {
             obj.body = JSON.stringify(params);
         }
 

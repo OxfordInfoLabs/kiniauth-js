@@ -9,6 +9,8 @@ import KaRegister from "./components/ka-register";
 import KaActivate from "./components/ka-activate";
 import KaPasswordReset from "./components/ka-password-reset";
 import KaNewPassword from "./components/ka-new-password";
+import KaSession from './components/ka-session';
+import * as kinibind from '../node_modules/kinibind/dist/kinibind';
 
 export default class Kiniauth {
 
@@ -36,6 +38,10 @@ export default class Kiniauth {
 
     public bindElements() {
 
+        kinibind._prefix = "ka";
+        kinibind._fullPrefix = "ka-";
+        kinibind._visibilityCallback = Configuration.elementVisibilityFunction;
+
         // Create the custom elements we need
         customElements.define('ka-recaptcha', KaRecaptcha);
         customElements.define('ka-signin', KaSignin);
@@ -44,6 +50,7 @@ export default class Kiniauth {
         customElements.define("ka-new-password", KaNewPassword);
         customElements.define("ka-register", KaRegister);
         customElements.define("ka-activate", KaActivate);
+        customElements.define("ka-session", KaSession);
     }
 
 
