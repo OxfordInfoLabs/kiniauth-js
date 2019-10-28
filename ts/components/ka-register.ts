@@ -24,6 +24,7 @@ export default class KaRegister extends StandardForm {
     constructor() {
         super({
             "email": {
+                email: "You must supply a valid email address",
                 required: "The email address is required"
             },
             "name": {
@@ -65,7 +66,7 @@ export default class KaRegister extends StandardForm {
         if (jsonResponse.validationErrors) {
 
             if (jsonResponse.validationErrors.emailAddress) {
-                Validation.setFieldError(this, "email", true, jsonResponse.validationErrors.emailAddress.errorMessage);
+                Validation.setFieldError(this, "email", true, jsonResponse.validationErrors.emailAddress.email.errorMessage);
             }
         } else {
             Validation.setFieldError(this, "password", true, jsonResponse.message);

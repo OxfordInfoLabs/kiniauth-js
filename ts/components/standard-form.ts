@@ -147,6 +147,10 @@ export default abstract class StandardForm extends HTMLElement {
                     case "password":
                         valid = Validation.validatePasswordFields(this, identifiers) && valid;
                         break;
+
+                    case "email":
+                        valid = Validation.validateEmailFields(this, identifiers) && valid;
+                        break;
                     case "equals":
                         valid = Validation.validateEqualsFields(this, fieldName, validatorData.otherField, validatorData.message);
                 }
