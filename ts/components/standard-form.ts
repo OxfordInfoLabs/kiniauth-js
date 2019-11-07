@@ -42,6 +42,9 @@ export default abstract class StandardForm extends HTMLElement {
     // Bind the components
     private bind() {
 
+        // If default/actual values have been set against a field, bind them now.
+        this.setFieldValues(this.fields);
+
         // Check we have a form
         let forms = this.getElementsByTagName("form");
         if (forms.length == 0) {
@@ -191,4 +194,18 @@ export default abstract class StandardForm extends HTMLElement {
      * @param jsonResponse
      */
     public abstract failure(jsonResponse);
+
+    /**
+     * Bind field values if set to the relevant fields
+     *
+     * @param fields
+     */
+    public setFieldValues(fields) {
+        Object.keys(fields).forEach(fieldKey => {
+            if (fields[fieldKey].value != undefined || fields[fieldKey].value != null) {
+                const field = <HTMLElement>this.querySelector("[data-" + fieldKey + "-field]");
+                field.setAttribute('value', fields[fieldKey].value);
+            }
+        })
+    }
 }

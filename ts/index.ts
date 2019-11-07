@@ -11,6 +11,7 @@ import KaPasswordReset from "./components/ka-password-reset";
 import KaNewPassword from "./components/ka-new-password";
 import KaSession from './components/ka-session';
 import * as kinibind from '../node_modules/kinibind/dist/kinibind';
+import KaContact from './components/ka-contact';
 
 export default class Kiniauth {
 
@@ -51,6 +52,7 @@ export default class Kiniauth {
         customElements.define("ka-register", KaRegister);
         customElements.define("ka-activate", KaActivate);
         customElements.define("ka-session", KaSession);
+        customElements.define("ka-contact", KaContact);
     }
 
 

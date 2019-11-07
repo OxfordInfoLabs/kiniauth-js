@@ -90,6 +90,26 @@ export default class Api {
             });
     }
 
+    public getContact(contactId) {
+        return this.callAPI('/account/contact/' + contactId)
+            .then((response) => {
+                if (response.ok) {
+                    return response.text().then(function (text) {
+                        return text ? JSON.parse(text) : {}
+                    })
+                } else {
+                    throw new Error(response.statusText);
+                }
+            })
+            .then((data) => {
+                return data;
+            });
+    }
+
+    public saveContact(contact) {
+        return this.callAPI('/account/contact/save', contact, 'POST');
+    }
+
     /**
      * Call an API using fetch
      *
