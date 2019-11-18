@@ -204,8 +204,12 @@ export default abstract class StandardForm extends HTMLElement {
         Object.keys(fields).forEach(fieldKey => {
             if (fields[fieldKey].value != undefined || fields[fieldKey].value != null) {
                 const field = <HTMLElement>this.querySelector("[data-" + fieldKey + "-field]");
-                field.setAttribute('value', fields[fieldKey].value);
+                if (field instanceof HTMLSelectElement) {
+                    field.value = fields[fieldKey].value;
+                } else {
+                    field.setAttribute('value', fields[fieldKey].value);
+                }
             }
-        })
+        });
     }
 }

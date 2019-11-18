@@ -18,6 +18,8 @@ export default class FieldValue {
                 return element.value;
             }
 
+        } else if (element instanceof HTMLSelectElement) {
+            return element.value;
         }
 
     }
