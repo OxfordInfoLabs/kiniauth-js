@@ -19,6 +19,14 @@ export default class Api {
 
 
     /**
+     * Logout API.
+     */
+    public logout() {
+        return this.callAPI('/guest/auth/logout');
+    }
+
+
+    /**
      * Supply two factor code where accounts require it.
      *
      * @param code
@@ -35,9 +43,10 @@ export default class Api {
      * @param accountName
      * @param password
      */
-    public createNewAccount(emailAddress, accountName, password) {
+    public createNewAccount(emailAddress, name, accountName, password) {
         return this.callAPI('/guest/registration/create', {
             emailAddress: emailAddress,
+            name: name,
             accountName: accountName,
             password: password
         }, 'POST');
@@ -51,6 +60,32 @@ export default class Api {
      */
     public activateAccount(activationCode) {
         return this.callAPI('/guest/registration/activate/' + activationCode);
+    }
+
+
+    /**
+     *
+     * Get an invitation email for a code.
+     *
+     * @param invitationCode
+     */
+    public getInvitationDetails(invitationCode) {
+        return this.callAPI('/guest/registration/invitation/' + invitationCode);
+    }
+
+
+    /**
+     * Accept an invitation
+     *
+     * @param invitationCode
+     * @param name
+     * @param password
+     */
+    public acceptInvitation(invitationCode, name, password) {
+        return this.callAPI('/guest/registration/invitation/' + invitationCode, {
+            name: name,
+            password: password
+        }, 'POST');
     }
 
 
@@ -71,7 +106,7 @@ export default class Api {
      * @param resetCode
      */
     public resetPassword(newPassword, resetCode) {
-        return this.callAPI('/guest/auth/passwordReset', { newPassword: newPassword, resetCode: resetCode }, 'POST');
+        return this.callAPI('/guest/auth/passwordReset', {newPassword: newPassword, resetCode: resetCode}, 'POST');
     }
 
     public getSessionData() {

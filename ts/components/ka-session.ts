@@ -6,22 +6,29 @@ export default class KaSession extends HTMLElement {
 
     private static sessionData: any;
 
-    constructor(){
+    constructor() {
         super();
 
+        let view = kinibind.bind(this, {
+            info: {}
+        });
+
+        // Update the session data.
+        KaSession.getSessionData().then((sessionData) => {
+            view.models.info = sessionData;
+        });
+
+    }
+
+    /**
+     * Get session data once
+     */
+    private static getSessionData(): Promise<any> {
         if (!KaSession.sessionData) {
-            let view = kinibind.bind(this, {
-                info: {}
-            });
             let api = new Api();
-            api.getSessionData().then(data => {
-                KaSession.sessionData = data;
-                view.models.info = data;
-            })
-        } else {
-            kinibind.bind(this, {
-                info: KaSession.sessionData
-            });
+            KaSession.sessionData = api.getSessionData();
         }
+        return KaSession.sessionData;
+
     }
 }

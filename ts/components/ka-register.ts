@@ -28,6 +28,9 @@ export default class KaRegister extends StandardForm {
                 required: "The email address is required"
             },
             "name": {
+                required: "Your name is required"
+            },
+            "accountname": {
                 required: "The account name is required"
             },
             "password": {
@@ -55,7 +58,7 @@ export default class KaRegister extends StandardForm {
 
     public submitForm(fieldValues: any): Promise<any> {
         let api = new Api();
-        return api.createNewAccount(fieldValues.email, fieldValues.name, fieldValues.password);
+        return api.createNewAccount(fieldValues.email, fieldValues.name,  fieldValues.accountName, fieldValues.password);
     }
 
     public success(jsonResponse: any) {

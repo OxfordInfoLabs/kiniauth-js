@@ -12,6 +12,8 @@ import KaNewPassword from "./components/ka-new-password";
 import KaSession from './components/ka-session';
 import * as kinibind from '../node_modules/kinibind/dist/kinibind';
 import KaContact from './components/ka-contact';
+import KaInvitation from "./components/ka-invitation";
+import KaSignout from "./components/ka-signout";
 
 export default class Kiniauth {
 
@@ -46,6 +48,7 @@ export default class Kiniauth {
         // Create the custom elements we need
         customElements.define('ka-recaptcha', KaRecaptcha);
         customElements.define('ka-signin', KaSignin);
+        customElements.define('ka-signout', KaSignout);
         customElements.define("ka-2fa", Ka2fa);
         customElements.define("ka-password-reset", KaPasswordReset);
         customElements.define("ka-new-password", KaNewPassword);
@@ -53,6 +56,7 @@ export default class Kiniauth {
         customElements.define("ka-activate", KaActivate);
         customElements.define("ka-session", KaSession);
         customElements.define("ka-contact", KaContact);
+        customElements.define("ka-invitation", KaInvitation);
     }
 
 
