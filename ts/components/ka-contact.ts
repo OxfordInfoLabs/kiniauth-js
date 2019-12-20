@@ -1,9 +1,9 @@
 import RequestParams from '../util/request-params';
 import Api from '../framework/api';
 import StandardForm from './standard-form';
-import * as kinibind from '../../node_modules/kinibind/dist/kinibind';
 // @ts-ignore
 import * as _ from 'lodash';
+import Kiniauth from '../index';
 
 /**
  * Register component
@@ -52,7 +52,7 @@ export default class KaContact extends StandardForm {
             type: this.contactType
         };
 
-        let view = kinibind.bind(this, {
+        let view = Kiniauth.kinibind.bind(this, {
             countries: this.countryCodes()
         });
 

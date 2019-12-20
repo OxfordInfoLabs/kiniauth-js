@@ -1,6 +1,6 @@
 import Configuration from "../configuration";
-import * as kinibind from '../../node_modules/kinibind/dist/kinibind';
 import Api from "../framework/api";
+import Kiniauth from '../index';
 
 export default class KaSession extends HTMLElement {
 
@@ -9,7 +9,7 @@ export default class KaSession extends HTMLElement {
     constructor() {
         super();
 
-        let view = kinibind.bind(this, {
+        let view = Kiniauth.kinibind.bind(this, {
             info: {}
         });
 
