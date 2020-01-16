@@ -4,6 +4,7 @@
 import Configuration from "../configuration";
 import KaRecaptcha from "../components/ka-recaptcha";
 import FieldValue from "../util/field-value";
+import Kiniauth from "../index";
 
 export default class Validation {
 
@@ -154,7 +155,8 @@ export default class Validation {
      */
     static validateRecaptcha(containingElement: Element, message: string) {
 
-        let recaptchas = containingElement.getElementsByTagName("ka-recaptcha");
+        let recaptchas = containingElement.getElementsByTagName(Kiniauth.kinibind._prefix + "-recaptcha");
+
         if (recaptchas.length > 0) {
 
             let recaptcha = <KaRecaptcha>recaptchas.item(0);
