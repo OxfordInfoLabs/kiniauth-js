@@ -42,7 +42,7 @@ export default class KaRegister extends StandardForm {
                 required: "A password is required"
             },
             "accept": {
-                required: "you must accept the terms and conditions"
+                required: "You must accept the terms and conditions"
             }
         });
 

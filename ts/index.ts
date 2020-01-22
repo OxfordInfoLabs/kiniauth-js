@@ -41,6 +41,7 @@ export default class Kiniauth {
     }
 
 
+
     public bindElements() {
 
         Kiniauth.kinibind._prefix = 'ka';
