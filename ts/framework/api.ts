@@ -43,12 +43,13 @@ export default class Api {
      * @param accountName
      * @param password
      */
-    public createNewAccount(emailAddress, name, accountName, password) {
+    public createNewAccount(emailAddress, name, accountName, password, username = null) {
         return this.callAPI('/guest/registration/create', {
             emailAddress: emailAddress,
             name: name,
             accountName: accountName,
-            password: password
+            password: password,
+            username: username
         }, 'POST');
     }
 

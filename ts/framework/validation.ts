@@ -124,6 +124,38 @@ export default class Validation {
 
 
     /**
+     * Validate username fields
+     *
+     * @param containingElement
+     * @param identifiers
+     */
+    static validateUsernameFields(containingElement: Element, identifiers: any){
+        let valid: boolean = true;
+
+        Object.keys(identifiers).forEach((item) => {
+            var element: Element = containingElement.querySelector("[data-" + this.camelToHyphen(item) + "-field]");
+
+            if (element instanceof HTMLInputElement) {
+
+                let value = element.value;
+
+                let elementValid = value.match(/^[a-zA-Z0-9-_]+$/) !== null;
+
+                if (!elementValid) {
+                    this.setFieldError(containingElement, item, true, identifiers[item]);
+                }
+
+                valid = valid && elementValid;
+
+            }
+
+        });
+
+        return valid;
+    }
+
+
+    /**
      * Validate a field equalling another field
      *
      * @param containingElement

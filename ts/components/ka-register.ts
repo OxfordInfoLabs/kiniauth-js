@@ -30,7 +30,11 @@ export default class KaRegister extends StandardForm {
             "name": {
                 required: "Your name is required"
             },
-            "accountname": {
+            "username": {
+                username: "Usernames must only contain letters numbers, hypens and underscores",
+                required: "A username is required"
+            },
+            "accountName": {
                 required: "The account name is required"
             },
             "password": {
@@ -58,7 +62,7 @@ export default class KaRegister extends StandardForm {
 
     public submitForm(fieldValues: any): Promise<any> {
         let api = new Api();
-        return api.createNewAccount(fieldValues.email, fieldValues.name,  fieldValues.accountName, fieldValues.password);
+        return api.createNewAccount(fieldValues.email, fieldValues.name, fieldValues.accountName, fieldValues.password, fieldValues.username);
     }
 
     public success(jsonResponse: any) {
