@@ -4,6 +4,7 @@
 import Configuration from "../configuration";
 import KaRecaptcha from "../components/ka-recaptcha";
 import FieldValue from "../util/field-value";
+import Kiniauth from "../index";
 
 export default class Validation {
 
@@ -33,7 +34,9 @@ export default class Validation {
         let valid: boolean = true;
 
         Object.keys(identifiers).forEach((item) => {
-            var element: Element = containingElement.querySelector("[data-" + item + "-field]");
+
+
+            var element: Element = containingElement.querySelector("[data-" + this.camelToHyphen(item) + "-field]");
             if (element instanceof HTMLInputElement) {
 
                 let elementValid: boolean;
@@ -65,7 +68,7 @@ export default class Validation {
         let valid: boolean = true;
 
         Object.keys(identifiers).forEach((item) => {
-            var element: Element = containingElement.querySelector("[data-" + item + "-field]");
+            var element: Element = containingElement.querySelector("[data-" + this.camelToHyphen(item) + "-field]");
 
             if (element instanceof HTMLInputElement) {
 
@@ -97,7 +100,7 @@ export default class Validation {
         let valid: boolean = true;
 
         Object.keys(identifiers).forEach((item) => {
-            var element: Element = containingElement.querySelector("[data-" + item + "-field]");
+            var element: Element = containingElement.querySelector("[data-" + this.camelToHyphen(item) + "-field]");
 
             if (element instanceof HTMLInputElement) {
 
@@ -131,8 +134,8 @@ export default class Validation {
     static validateEqualsFields(containingElement: Element, field: string, otherField: string, message: string) {
 
 
-        let fieldElement: HTMLElement = containingElement.querySelector("[data-" + field + "-field]");
-        let otherFieldElement: HTMLElement = containingElement.querySelector("[data-" + otherField + "-field]");
+        let fieldElement: HTMLElement = containingElement.querySelector("[data-" + this.camelToHyphen(field) + "-field]");
+        let otherFieldElement: HTMLElement = containingElement.querySelector("[data-" + this.camelToHyphen(otherField) + "-field]");
 
         let fieldValue = FieldValue.get(fieldElement);
         let valid: boolean = fieldValue == FieldValue.get(otherFieldElement);
@@ -152,7 +155,8 @@ export default class Validation {
      */
     static validateRecaptcha(containingElement: Element, message: string) {
 
-        let recaptchas = containingElement.getElementsByTagName("ka-recaptcha");
+        let recaptchas = containingElement.getElementsByTagName(Kiniauth.kinibind._prefix + "-recaptcha");
+
         if (recaptchas.length > 0) {
 
             let recaptcha = <KaRecaptcha>recaptchas.item(0);
@@ -174,11 +178,19 @@ export default class Validation {
 
     // Set a field error (visibility and message).
     static setFieldError(containingElement: Element, identifier: string, visible: boolean, message: string) {
-        let element: HTMLElement = containingElement.querySelector("[data-" + identifier + "-error]");
+        let element: HTMLElement = containingElement.querySelector("[data-" + this.camelToHyphen(identifier) + "-error]");
         if (element) {
             element.innerHTML = message;
             Configuration.elementVisibilityFunction(element, visible);
         }
+    }
+
+
+    // Convert camel case to hypen.
+    static camelToHyphen(string) {
+        return string.replace(/[A-Z]/g, function(match) {
+            return "-" + match.toLowerCase();
+        });
     }
 
 

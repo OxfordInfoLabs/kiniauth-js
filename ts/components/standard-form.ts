@@ -19,7 +19,7 @@ export default abstract class StandardForm extends HTMLElement {
     /**
      * Array of fields defined for this form
      */
-    private fields = {};
+    protected fields = {};
 
     /**
      * Boolean indicator for auto render captchas.
@@ -75,13 +75,14 @@ export default abstract class StandardForm extends HTMLElement {
 
                     // Grab submit button
                     var submitButton: HTMLButtonElement = this.querySelector("[type='submit']");
-                    ElementSpinner.spinElement(submitButton);
+                    if (submitButton)
+                        ElementSpinner.spinElement(submitButton);
 
 
                     // get all field values
                     let fieldValues = {};
                     Object.keys(this.fields).forEach((fieldName) => {
-                        let field = <HTMLElement>this.querySelector("[data-" + fieldName + "-field]");
+                        let field = <HTMLElement>this.querySelector("[data-" + Validation.camelToHyphen(fieldName) + "-field]");
                         if (field) {
                             fieldValues[fieldName] = FieldValue.get(field);
                         }
@@ -91,7 +92,8 @@ export default abstract class StandardForm extends HTMLElement {
                     // Submit the form
                     this.submitForm(fieldValues).then((response) => {
 
-                        ElementSpinner.restoreElement(submitButton);
+                        if (submitButton)
+                            ElementSpinner.restoreElement(submitButton);
 
                         response.json().then((jsonData) => {
 
@@ -204,7 +206,7 @@ export default abstract class StandardForm extends HTMLElement {
     public setFieldValues(fields) {
         Object.keys(fields).forEach(fieldKey => {
             if (fields[fieldKey].value != undefined || fields[fieldKey].value != null) {
-                const field = <HTMLElement>this.querySelector("[data-" + fieldKey + "-field]");
+                const field = <HTMLElement>this.querySelector("[data-" + Validation.camelToHyphen(fieldKey) + "-field]");
                 if (field instanceof HTMLSelectElement) {
                     field.value = fields[fieldKey].value;
                 } else {
