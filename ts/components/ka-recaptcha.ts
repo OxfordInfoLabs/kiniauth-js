@@ -45,6 +45,10 @@ export default class KaRecaptcha extends HTMLElement {
      * Render this recaptcha instance.
      */
     public render() {
+
+        // Ensure this element is visible
+        Configuration.elementVisibilityFunction(this, true);
+
         if (!this.rendered) {
             let instance = document.createElement("div");
             instance.id = this.instanceId;

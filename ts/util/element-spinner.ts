@@ -16,6 +16,7 @@ export default class ElementSpinner {
     static spinElement(element: HTMLElement) {
 
         let image: HTMLImageElement = document.createElement("img");
+        image.className = "spinner";
         image.src = this.spinnerBase64;
         element.parentElement.insertBefore(image, element);
 
