@@ -115,7 +115,11 @@ export default class Api {
             .then((response) => {
                 if (response.ok) {
                     return response.text().then(function (text) {
-                        return text ? JSON.parse(text) : {}
+                        let response = text ? JSON.parse(text) : {};
+                        if (response.sessionId) {
+                            document.cookie = "PHPSESSID=" + response.sessionId + ";path=/;domain=" + Configuration.endpoint;
+                        }
+                        return response;
                     })
                 } else {
                     throw new Error(response.statusText);

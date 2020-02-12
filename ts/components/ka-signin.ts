@@ -18,6 +18,7 @@ export default class KaSignin extends StandardForm {
      * Construct new element
      */
     constructor() {
+
         super({
             "email": {
                 required: "The email address is required"

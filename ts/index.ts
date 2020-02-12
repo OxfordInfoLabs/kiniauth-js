@@ -15,6 +15,8 @@ import KaContact from './components/ka-contact';
 import KaInvitation from './components/ka-invitation';
 import KaSignout from './components/ka-signout';
 
+import * as detect from '../node_modules/detect-browser/index';
+
 export default class Kiniauth {
 
     public static kinibind: any = importedKinibind;
@@ -34,12 +36,15 @@ export default class Kiniauth {
             Configuration.elementVisibilityFunction = params.elementVisibilityFunction;
         }
 
+        // Ensure backend cookies
+        if (this.ensureBackendCookies()){
+            // Bind elements - designed to be overridden if required in sub projects
+            this.bindElements();
+        }
 
-        // Bind elements - designed to be overridden if required in sub projects
-        this.bindElements();
+
 
     }
-
 
 
     public bindElements() {
@@ -63,6 +68,17 @@ export default class Kiniauth {
         customElements.define('ka-invitation', KaInvitation);
     }
 
+
+    // Ensure that we have backend cookies.
+    private ensureBackendCookies():boolean {
+        if (detect.detect().name == "safari" && !sessionStorage.getItem("cookiesConfigured")) {
+            sessionStorage.setItem("cookiesConfigured", "Y");
+            window.location.href = Configuration.endpoint + "/initialise-session";
+            return false;
+        } else {
+            return true;
+        }
+    }
 
 }
 
