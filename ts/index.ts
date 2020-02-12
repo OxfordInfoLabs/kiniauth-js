@@ -71,7 +71,10 @@ export default class Kiniauth {
 
     // Ensure that we have backend cookies.
     private ensureBackendCookies():boolean {
-        if (detect.detect().name == "safari" && !sessionStorage.getItem("cookiesConfigured")) {
+
+        let browser:string = detect.detect().name;
+
+        if ( (browser == "safari" || browser == "ios") && !sessionStorage.getItem("cookiesConfigured")) {
             sessionStorage.setItem("cookiesConfigured", "Y");
             window.location.href = Configuration.endpoint + "/initialise-session";
             return false;
