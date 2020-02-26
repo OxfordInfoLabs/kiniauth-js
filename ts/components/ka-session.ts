@@ -15,6 +15,7 @@ export default class KaSession extends HTMLElement {
 
         // Update the session data.
         KaSession.getSessionData().then((sessionData) => {
+            sessionData.response = 1;
             view.models.info = sessionData;
         });
 
