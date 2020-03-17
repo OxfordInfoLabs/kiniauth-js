@@ -1,6 +1,7 @@
 /**
  * Initialiser for kiniauth
  */
+import '@webcomponents/custom-elements';
 import KaSignin from './components/ka-signin';
 import Configuration from './configuration';
 import Ka2fa from './components/ka-2fa';
