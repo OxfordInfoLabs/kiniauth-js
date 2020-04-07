@@ -1,8 +1,6 @@
 import Validation from "../framework/validation";
-import ElementSpinner from "../util/element-spinner";
 import Api from "../framework/api";
 import RequestParams from "../util/request-params";
-import KaRecaptcha from "./ka-recaptcha";
 import StandardForm from "./standard-form";
 
 /**

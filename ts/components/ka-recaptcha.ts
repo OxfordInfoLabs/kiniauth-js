@@ -21,6 +21,7 @@ export default class KaRecaptcha extends HTMLElement {
 
         super();
 
+       
         if (Configuration.recaptchaKey) {
 
             KaRecaptcha.instanceIndex++;

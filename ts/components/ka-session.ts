@@ -1,23 +1,28 @@
-import Configuration from "../configuration";
 import Api from "../framework/api";
-import Kiniauth from '../index';
+import Kinivue from "../framework/kinivue";
 
 export default class KaSession extends HTMLElement {
 
     private static sessionData: any;
 
     constructor() {
+
         super();
 
-        let view = Kiniauth.kinibind.bind(this, {
-            info: {}
+        let view = new Kinivue({
+            el: this.querySelector(".vue-wrapper"),
+            data: {
+                info: {}
+            }
         });
 
         // Update the session data.
         KaSession.getSessionData().then((sessionData) => {
             sessionData.response = 1;
-            view.models.info = sessionData;
+
+            view.$data.info = sessionData;
         });
+
 
     }
 

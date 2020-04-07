@@ -9,8 +9,8 @@ export default class Configuration {
     };
 
     private static _endpoint: string;
-
     private static _recaptchaKey: string;
+    private static _componentPrefix: string = "ka";
 
 
     static get elementVisibilityFunction(): (element: HTMLElement, visible: boolean) => void {
@@ -37,5 +37,14 @@ export default class Configuration {
 
     static set recaptchaKey(value: string) {
         this._recaptchaKey = value;
+    }
+
+
+    static get componentPrefix(): string {
+        return this._componentPrefix;
+    }
+
+    static set componentPrefix(value: string) {
+        this._componentPrefix = value;
     }
 }

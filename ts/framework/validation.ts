@@ -4,7 +4,6 @@
 import Configuration from "../configuration";
 import KaRecaptcha from "../components/ka-recaptcha";
 import FieldValue from "../util/field-value";
-import Kiniauth from "../index";
 
 export default class Validation {
 
@@ -129,7 +128,7 @@ export default class Validation {
      * @param containingElement
      * @param identifiers
      */
-    static validateUsernameFields(containingElement: Element, identifiers: any){
+    static validateUsernameFields(containingElement: Element, identifiers: any) {
         let valid: boolean = true;
 
         Object.keys(identifiers).forEach((item) => {
@@ -187,7 +186,7 @@ export default class Validation {
      */
     static validateRecaptcha(containingElement: Element, message: string) {
 
-        let recaptchas = containingElement.getElementsByTagName(Kiniauth.kinibind._prefix + "-recaptcha");
+        let recaptchas = containingElement.getElementsByTagName(Configuration.componentPrefix + "-recaptcha");
 
         if (recaptchas.length > 0) {
 
@@ -220,7 +219,7 @@ export default class Validation {
 
     // Convert camel case to hypen.
     static camelToHyphen(string) {
-        return string.replace(/[A-Z]/g, function(match) {
+        return string.replace(/[A-Z]/g, function (match) {
             return "-" + match.toLowerCase();
         });
     }

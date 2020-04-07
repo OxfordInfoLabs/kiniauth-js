@@ -2,7 +2,7 @@ import Validation from "../framework/validation";
 import KaRecaptcha from "./ka-recaptcha";
 import ElementSpinner from "../util/element-spinner";
 import FieldValue from "../util/field-value";
-import Kiniauth from "../index";
+import Configuration from "../configuration";
 
 /**
  * Standard form implementation.
@@ -52,8 +52,8 @@ export default abstract class StandardForm extends HTMLElement {
             alert("Missing form for " + this.tagName);
         } else {
 
-            // Check for a recaptcha
-            let recaptchas = this.getElementsByTagName(Kiniauth.kinibind._prefix + "-recaptcha");
+   // Check for a recaptcha
+            let recaptchas = this.getElementsByTagName(Configuration.componentPrefix + "-recaptcha");
             if (recaptchas.length > 0) {
                 this.recaptcha = <KaRecaptcha>recaptchas.item(0);
 

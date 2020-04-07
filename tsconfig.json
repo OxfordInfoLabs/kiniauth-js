@@ -3,6 +3,10 @@
     "outDir": "./dist/",
     "module": "es6",
     "target": "es6",
-    "allowJs": true
-  }
+    "allowJs": true,
+    "moduleResolution": "node"
+  },
+  "include": [
+    "node_modules/vue/types"
+  ]
 }

@@ -2,11 +2,8 @@
  * Sign in form component for Kini Auth based systems
  */
 import Validation from "../framework/validation";
-import Configuration from "../configuration";
-import ElementSpinner from "../util/element-spinner";
 import RequestParams from "../util/request-params";
 import Api from "../framework/api";
-import KaRecaptcha from "./ka-recaptcha";
 import StandardForm from "./standard-form";
 
 export default class KaSignin extends StandardForm {
