@@ -40,7 +40,7 @@ module.exports = {
             'node_modules'
         ],
         alias: {
-            'vue$': 'vue/dist/vue.esm.js'
+            'vue$': 'vue/dist/vue.min.js'
         }
     },
     mode: "production"

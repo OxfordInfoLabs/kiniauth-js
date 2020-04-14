@@ -1,9 +1,7 @@
 import RequestParams from '../util/request-params';
 import Api from '../framework/api';
 import StandardForm from './standard-form';
-// @ts-ignore
-import * as _ from 'lodash';
-import Kiniauth from '../index';
+import map from 'lodash/map';
 import Kinivue from "../framework/kinivue";
 
 /**
@@ -58,7 +56,7 @@ export default class KaContact extends StandardForm {
             data: {
                 countries: this.countryCodes()
             }
-        });   
+        });
 
         const contactId = RequestParams.get().contact;
         if (contactId) {
@@ -68,7 +66,7 @@ export default class KaContact extends StandardForm {
 
     public submitForm(fieldValues: any): Promise<any> {
         const api = new Api();
-        _.map(fieldValues, (value, field) => {
+        map(fieldValues, (value, field) => {
             this.contactObject[field] = value;
         });
 

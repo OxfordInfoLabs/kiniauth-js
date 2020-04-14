@@ -1,6 +1,6 @@
 {
   "name": "kiniauth",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Kiniauth Web Components",
   "main": "index.js",
   "files": [
@@ -9,9 +9,9 @@
   ],
   "scripts": {
     "watch": "webpack --config webpack.config.js --watch",
-    "production-build": "webpack --config webpack.config.js -p",
+    "build:production": "webpack --config webpack.config.js -p --display-modules",
     "sass": "node-sass -w sass --output dist",
-    "publish-package": "npm run production-build; bump patch; npm publish"
+    "publish:project": "npm run production-build; bump patch; npm publish"
   },
   "repository": {
     "type": "git",
