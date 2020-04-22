@@ -157,7 +157,7 @@ export default class Api {
      * @param params
      * @param method
      */
-    private callAPI(url: string, params: any = {}, method: string = 'GET') {
+    public callAPI(url: string, params: any = {}, method: string = 'GET') {
 
         url = Configuration.endpoint + url;
 

@@ -15,6 +15,7 @@ import KaContact from './components/ka-contact';
 import KaInvitation from './components/ka-invitation';
 import KaSignout from './components/ka-signout';
 import KaDynamicForm from "./components/ka-dynamic-form";
+import KaBind from "./components/ka-bind";
 
 export default class Kiniauth {
 
@@ -44,6 +45,7 @@ export default class Kiniauth {
     public bindElements() {
 
         // Create the custom elements we need
+        customElements.define('ka-bind', KaBind);
         customElements.define('ka-recaptcha', KaRecaptcha);
         customElements.define('ka-signin', KaSignin);
         customElements.define('ka-signout', KaSignout);
