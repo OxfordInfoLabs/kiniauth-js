@@ -8,6 +8,7 @@
  */
 import Kinivue from "../framework/kinivue";
 import Api from "../framework/api";
+import RequestParams from "../util/request-params";
 
 export default class KaBind extends HTMLElement {
 
@@ -52,7 +53,16 @@ export default class KaBind extends HTMLElement {
     // Load the source
     private load() {
         let api = new Api();
-        api.callAPI(this.getAttribute("data-source")).then((results) => {
+
+        let url = this.getAttribute("data-source");
+
+
+        url = url.replace(/\{request\.([a-zA-Z]+?)\}/g,
+            (match, identifier):string => {
+            return RequestParams.get()[identifier];
+        });
+
+        api.callAPI(url).then((results) => {
             results.json().then(model => {
                 this.view[this.getAttribute("data-model")] = model;
                 let event = new Event("sourceLoaded", {

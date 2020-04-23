@@ -159,7 +159,8 @@ export default class Api {
      */
     public callAPI(url: string, params: any = {}, method: string = 'GET') {
 
-        url = Configuration.endpoint + url;
+        if (url.indexOf("http") < 0)
+            url = Configuration.endpoint + url;
 
         var obj: any = {
             method: method,
