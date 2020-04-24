@@ -14,7 +14,7 @@ export default class Api {
      * @return Promise
      */
     public login(emailAddress, password) {
-        return this.callAPI('/guest/auth/login?emailAddress=' + emailAddress + '&password=' + password);
+        return this.callAPI('/guest/auth/login?emailAddress=' + emailAddress + '&password=' + encodeURIComponent(password));
     }
 
 
