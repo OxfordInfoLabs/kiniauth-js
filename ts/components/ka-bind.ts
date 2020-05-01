@@ -25,14 +25,32 @@ export default class KaBind extends HTMLElement {
     // Initialise
     private init() {
 
-        if (!this.getAttribute("data-source") || !this.getAttribute("data-model")) {
-            alert("You must supply a source and a model to a bind component");
+
+        let model = this.getAttribute("data-model");
+        let source = this.getAttribute("data-source");
+
+        if (typeof model != "object" && !model) {
+            alert("You must supply a model to a bind component");
             return;
         }
 
 
         let data = {};
-        data[this.getAttribute("data-model")] = {};
+
+        if (typeof model == "string") {
+            try {
+                let jsonModel = JSON.parse(model);
+                data = jsonModel;
+            } catch (e) {
+                data[model] = {};
+            }
+
+
+        } else if (typeof model == "object")
+            data = model;
+
+
+
 
         this.view = new Kinivue({
             el: this.querySelector(".vue-wrapper"),
@@ -44,7 +62,7 @@ export default class KaBind extends HTMLElement {
             }
         });
 
-        if (!this.getAttribute("defer-load")) {
+        if (source && !this.getAttribute("defer-load")) {
             this.load();
         }
 
@@ -58,9 +76,10 @@ export default class KaBind extends HTMLElement {
 
 
         url = url.replace(/\{request\.([a-zA-Z]+?)\}/g,
-            (match, identifier):string => {
-            return RequestParams.get()[identifier];
-        });
+            (match, identifier): string => {
+                return RequestParams.get()[identifier];
+            });
+
 
         api.callAPI(url).then((results) => {
             results.json().then(model => {
