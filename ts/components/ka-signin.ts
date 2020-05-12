@@ -23,7 +23,7 @@ export default class KaSignin extends StandardForm {
             "password": {
                 required: "A password is required"
             }
-        },false);
+        }, false);
     }
 
 
@@ -34,7 +34,8 @@ export default class KaSignin extends StandardForm {
 
     public success(jsonResponse: any) {
 
-        var signinSuccessURL = RequestParams.get().signinSuccessURL ? RequestParams.get().signinSuccessURL : "/";
+        var signinSuccessURL = RequestParams.get().signinSuccessURL ? RequestParams.get().signinSuccessURL :
+            (this.getAttribute("data-success-url") ? this.getAttribute("data-success-url") : "/");
 
         if (jsonResponse === 'REQUIRES_2FA') {
             if (this.twoFactorURL) {
