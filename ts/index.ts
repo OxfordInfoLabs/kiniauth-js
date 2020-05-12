@@ -16,6 +16,7 @@ import KaInvitation from './components/ka-invitation';
 import KaSignout from './components/ka-signout';
 import KaDynamicForm from "./components/ka-dynamic-form";
 import KaBind from "./components/ka-bind";
+import KaAuth from "./components/ka-auth";
 
 export default class Kiniauth {
 
@@ -55,6 +56,7 @@ export default class Kiniauth {
         customElements.define('ka-register', KaRegister);
         customElements.define('ka-activate', KaActivate);
         customElements.define('ka-session', KaSession);
+        customElements.define('ka-auth', KaAuth);
         customElements.define('ka-contact', KaContact);
         customElements.define('ka-invitation', KaInvitation);
         customElements.define('ka-dynamic-form', KaDynamicForm);

@@ -29,7 +29,7 @@ export default class KaSession extends HTMLElement {
     /**
      * Get session data once
      */
-    private static getSessionData(): Promise<any> {
+    public static getSessionData(): Promise<any> {
         if (!KaSession.sessionData) {
             let api = new Api();
             KaSession.sessionData = api.getSessionData();
