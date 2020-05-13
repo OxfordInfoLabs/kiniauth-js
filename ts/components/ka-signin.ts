@@ -5,6 +5,7 @@ import Validation from "../framework/validation";
 import RequestParams from "../util/request-params";
 import Api from "../framework/api";
 import StandardForm from "./standard-form";
+import KaSession from "./ka-session";
 
 export default class KaSignin extends StandardForm {
 
@@ -24,6 +25,15 @@ export default class KaSignin extends StandardForm {
                 required: "A password is required"
             }
         }, false);
+
+        if (this.recaptcha) {
+            KaSession.getSessionData().then(session => {
+                if (session.delayedCaptchas["guest/auth/login"]) {
+                    this.recaptcha.render();
+                }
+            });
+        }
+
     }
 
 

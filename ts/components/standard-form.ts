@@ -27,7 +27,7 @@ export default abstract class StandardForm extends HTMLElement {
     private autoRenderCaptchas: boolean;
 
     // has recaptcha
-    private recaptcha: KaRecaptcha = null;
+    protected recaptcha: KaRecaptcha = null;
 
 
     constructor(fields = {}, autoRenderCaptchas = true) {
