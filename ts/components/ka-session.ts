@@ -20,7 +20,7 @@ export default class KaSession extends HTMLElement {
         KaSession.getSessionData().then((sessionData) => {
             sessionData.response = 1;
 
-            view.$data.info = sessionData;
+            view["info"] = sessionData;
         });
 
 

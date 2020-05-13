@@ -207,6 +207,7 @@ export default class Validation {
     }
 
 
+
     // Set a field error (visibility and message).
     static setFieldError(containingElement: Element, identifier: string, visible: boolean, message: string) {
         let element: HTMLElement = containingElement.querySelector("[data-" + this.camelToHyphen(identifier) + "-error]");
@@ -223,6 +224,9 @@ export default class Validation {
             return "-" + match.toLowerCase();
         });
     }
+
+
+
 
 
 }

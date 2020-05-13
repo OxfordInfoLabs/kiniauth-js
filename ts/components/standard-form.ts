@@ -33,9 +33,21 @@ export default abstract class StandardForm extends HTMLElement {
     constructor(fields = {}, autoRenderCaptchas = true) {
         super();
 
-        this.fields = fields;
+        if (fields && Object.keys(fields).length > 0) {
+            this.setFields(fields);
+        }
+
         this.autoRenderCaptchas = autoRenderCaptchas;
 
+    }
+
+    /**
+     * Set fields - can be called after construction if deferred render is preferred
+     *
+     * @param fields
+     */
+    public setFields(fields: any) {
+        this.fields = fields;
         this.bind();
     }
 
@@ -52,7 +64,7 @@ export default abstract class StandardForm extends HTMLElement {
             alert("Missing form for " + this.tagName);
         } else {
 
-   // Check for a recaptcha
+            // Check for a recaptcha
             let recaptchas = this.getElementsByTagName(Configuration.componentPrefix + "-recaptcha");
             if (recaptchas.length > 0) {
                 this.recaptcha = <KaRecaptcha>recaptchas.item(0);
@@ -83,6 +95,12 @@ export default abstract class StandardForm extends HTMLElement {
                     let fieldValues = {};
                     Object.keys(this.fields).forEach((fieldName) => {
                         let field = <HTMLElement>this.querySelector("[data-" + Validation.camelToHyphen(fieldName) + "-field]");
+
+                        // Also check for custom fields as well.
+                        if (!field) {
+                            field = <HTMLElement>this.querySelector("[data-custom-field='" + fieldName + "']");
+                        }
+
                         if (field) {
                             fieldValues[fieldName] = FieldValue.get(field);
                         }
@@ -196,7 +214,7 @@ export default abstract class StandardForm extends HTMLElement {
 
 
     /**
-     * On failure, teh JSON response is returned
+     * On failure, the JSON response is returned
      *
      * @param jsonResponse
      */

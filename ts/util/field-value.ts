@@ -14,6 +14,14 @@ export default class FieldValue {
 
             if (element.type == "checkbox") {
                 return element.checked;
+            } else if (element.type == "radio") {
+                let elementName = element.name;
+                let match = document.querySelector("input[name='" + elementName + "']:checked");
+                if (match) {
+                    return match.getAttribute("data-value");
+                } else {
+                    return null;
+                }
             } else {
                 return element.value;
             }

@@ -20,7 +20,27 @@ export default class KaRegister extends StandardForm {
      * Construct new element
      */
     constructor() {
-        super({
+        super();
+
+        this.initialiseFields();
+
+        // Resolve the success url, prioritising a passed request param, falling back to a data attribute or /
+        this.successUrl = RequestParams.get().successUrl ? RequestParams.get().successUrl : (
+            this.getAttribute("data-success-url") ? this.getAttribute("data-success-url") : "/");
+
+        this.activationUrl = this.getAttribute("data-activation-url");
+        if (!this.activationUrl) {
+            alert("You must supply a data-activation-url attribute to ka-register for the follow on activation screen");
+        }
+
+
+    }
+
+
+    // Merge in any custom fields we may find
+    private initialiseFields() {
+
+        let fields = {
             "email": {
                 email: "You must supply a valid email address",
                 required: "The email address is required"
@@ -42,25 +62,21 @@ export default class KaRegister extends StandardForm {
             "accept": {
                 required: "You must accept the terms and conditions"
             }
+        };
+
+        this.querySelectorAll("[data-custom-field]").forEach(field => {
+            let customField = field.getAttribute("data-custom-field");
+            fields[customField] = {};
         });
 
-
-        // Resolve the success url, prioritising a passed request param, falling back to a data attribute or /
-        this.successUrl = RequestParams.get().successUrl ? RequestParams.get().successUrl : (
-            this.getAttribute("data-success-url") ? this.getAttribute("data-success-url") : "/");
-
-        this.activationUrl = this.getAttribute("data-activation-url");
-        if (!this.activationUrl) {
-            alert("You must supply a data-activation-url attribute to ka-register for the follow on activation screen");
-        }
-
+        this.setFields(fields);
 
     }
 
 
     public submitForm(fieldValues: any): Promise<any> {
         let api = new Api();
-        return api.createNewAccount(fieldValues.email, fieldValues.name, fieldValues.accountName, fieldValues.password, fieldValues.username);
+        return api.createNewAccount(fieldValues.email, fieldValues.name, fieldValues.accountName, fieldValues.password, fieldValues.username, fieldValues);
     }
 
     public success(jsonResponse: any) {
@@ -71,7 +87,10 @@ export default class KaRegister extends StandardForm {
         if (jsonResponse.validationErrors) {
 
             if (jsonResponse.validationErrors.emailAddress) {
-                Validation.setFieldError(this, "email", true, jsonResponse.validationErrors.emailAddress.email.errorMessage);
+                let message = jsonResponse.validationErrors.emailAddress.email ?
+                    jsonResponse.validationErrors.emailAddress.email.errorMessage :
+                    jsonResponse.validationErrors.emailAddress.errorMessage;
+                Validation.setFieldError(this, "email", true, message);
             }
         } else {
             Validation.setFieldError(this, "password", true, jsonResponse.message);
