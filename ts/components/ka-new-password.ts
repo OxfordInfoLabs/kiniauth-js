@@ -28,7 +28,7 @@ export default class KaNewPassword extends StandardForm {
 
     public submitForm(fieldValues: any): Promise<any> {
         let api = new Api();
-        return api.resetPassword(fieldValues.password, RequestParams.get()["code"]);
+        return api.resetPassword(fieldValues.password, RequestParams.get()["code"], this.recaptcha.getResponse());
     }
 
     public success(jsonResponse: any) {

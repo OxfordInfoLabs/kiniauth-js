@@ -28,7 +28,7 @@ export default class KaSignin extends StandardForm {
 
         if (this.recaptcha) {
             KaSession.getSessionData().then(session => {
-                if (session.delayedCaptchas["guest/auth/login"]) {
+                if (session.delayedCaptchas && session.delayedCaptchas["guest/auth/login"]) {
                     this.recaptcha.render();
                 }
             });
@@ -39,7 +39,8 @@ export default class KaSignin extends StandardForm {
 
     public submitForm(fieldValues: any): Promise<any> {
         let api = new Api();
-        return api.login(fieldValues.email, fieldValues.password);
+        return api.login(fieldValues.email, fieldValues.password,
+            this.recaptcha.isRendered() ? this.recaptcha.getResponse() : null);
     }
 
     public success(jsonResponse: any) {

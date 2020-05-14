@@ -13,8 +13,11 @@ export default class Api {
      *
      * @return Promise
      */
-    public login(emailAddress, password) {
-        return this.callAPI('/guest/auth/login?emailAddress=' + emailAddress + '&password=' + encodeURIComponent(password));
+    public login(emailAddress, password, captcha?) {
+        let url = '/guest/auth/login?emailAddress=' + emailAddress + '&password=' + encodeURIComponent(password);
+        if (captcha)
+            url += '&captcha=' + captcha;
+        return this.callAPI(url);
     }
 
 
@@ -43,14 +46,16 @@ export default class Api {
      * @param accountName
      * @param password
      */
-    public createNewAccount(emailAddress, name, accountName, password, username = null, customFields = {}) {
-        return this.callAPI('/guest/registration/create', {...{
-            emailAddress: emailAddress,
-            name: name,
-            accountName: accountName,
-            password: password,
-            username: username
-        }, ...customFields}, 'POST');
+    public createNewAccount(emailAddress, name, accountName, password, captcha, username = null, customFields = {}) {
+        return this.callAPI('/guest/registration/create?captcha=' + captcha, {
+            ...{
+                emailAddress: emailAddress,
+                name: name,
+                accountName: accountName,
+                password: password,
+                username: username
+            }, ...customFields
+        }, 'POST');
     }
 
 
@@ -95,8 +100,8 @@ export default class Api {
      *
      * @param emailAddress
      */
-    public requestPasswordReset(emailAddress) {
-        return this.callAPI('/guest/auth/passwordReset?emailAddress=' + emailAddress);
+    public requestPasswordReset(emailAddress, captcha) {
+        return this.callAPI('/guest/auth/passwordReset?emailAddress=' + emailAddress + '&captcha=' + captcha);
     }
 
 
@@ -106,8 +111,8 @@ export default class Api {
      * @param newPassword
      * @param resetCode
      */
-    public resetPassword(newPassword, resetCode) {
-        return this.callAPI('/guest/auth/passwordReset', {newPassword: newPassword, resetCode: resetCode}, 'POST');
+    public resetPassword(newPassword, resetCode, captcha) {
+        return this.callAPI('/guest/auth/passwordReset?captcha=' + captcha, {newPassword: newPassword, resetCode: resetCode}, 'POST');
     }
 
     public getSessionData() {

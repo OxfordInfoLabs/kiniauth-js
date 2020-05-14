@@ -76,7 +76,7 @@ export default class KaRegister extends StandardForm {
 
     public submitForm(fieldValues: any): Promise<any> {
         let api = new Api();
-        return api.createNewAccount(fieldValues.email, fieldValues.name, fieldValues.accountName, fieldValues.password, fieldValues.username, fieldValues);
+        return api.createNewAccount(fieldValues.email, fieldValues.name, fieldValues.accountName, fieldValues.password, this.recaptcha.getResponse(), fieldValues.username, fieldValues);
     }
 
     public success(jsonResponse: any) {
