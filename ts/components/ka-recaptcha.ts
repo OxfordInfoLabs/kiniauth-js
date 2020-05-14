@@ -8,7 +8,10 @@ export default class KaRecaptcha extends HTMLElement {
     // Static instance index
     private static instanceIndex = 0;
 
-    // Instance id
+    // Component id
+    private componentId;
+
+    // Returned instance id for Captcha
     private instanceId;
 
     // Rendered flag
@@ -21,11 +24,11 @@ export default class KaRecaptcha extends HTMLElement {
 
         super();
 
-       
+
         if (Configuration.recaptchaKey) {
 
             KaRecaptcha.instanceIndex++;
-            this.instanceId = "recaptcha_" + KaRecaptcha.instanceIndex;
+            this.componentId = "recaptcha_" + KaRecaptcha.instanceIndex;
 
             if (KaRecaptcha.instanceIndex == 1)
                 this.loadScript();
@@ -52,7 +55,7 @@ export default class KaRecaptcha extends HTMLElement {
 
         if (!this.rendered) {
             let instance = document.createElement("div");
-            instance.id = this.instanceId;
+            instance.id = this.componentId;
             this.appendChild(instance);
 
             if (!window["grecaptcha"]) {
@@ -61,7 +64,7 @@ export default class KaRecaptcha extends HTMLElement {
                 }, 500);
                 return;
             } else {
-                window["grecaptcha"].render(this.instanceId, {
+                this.instanceId = window["grecaptcha"].render(this.componentId, {
                     'sitekey': Configuration.recaptchaKey
                 });
             }
@@ -77,7 +80,7 @@ export default class KaRecaptcha extends HTMLElement {
      * Reset the captcha
      */
     public reset() {
-        window["grecaptcha"].reset();
+        window["grecaptcha"].reset(this.instanceId);
     }
 
 
@@ -92,7 +95,7 @@ export default class KaRecaptcha extends HTMLElement {
      * Check whether or not this recaptcha is completed.
      */
     public getResponse(): string {
-        return window["grecaptcha"].getResponse();
+        return window["grecaptcha"].getResponse(this.instanceId);
     }
 
 
