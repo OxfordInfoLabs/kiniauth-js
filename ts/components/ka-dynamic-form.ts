@@ -1,6 +1,7 @@
 import Kinivue from "../framework/kinivue";
 import Vue from "vue";
 import RequestParams from "../util/request-params";
+import KaSession from "./ka-session";
 
 /**
  * Register component
@@ -37,48 +38,62 @@ export default class KaDynamicForm extends HTMLElement {
         let rawData = sessionStorage.getItem(store);
         let data = rawData ? JSON.parse(rawData) : {};
 
-        // Create the view
-        this.view = new Kinivue({
-            el: this.querySelector("form"),
-            data: {
-                data: data,
-                errors: {},
-                dateTime: new Date().toDateString() + " " + new Date().toLocaleTimeString(),
-                valid: false
-            },
-            methods: {
-                set: (key, value) => {
-                    this.setDataValue(key, value);
-                },
-                toggleMulti: (key, setValue) => {
 
-                    let values = [];
+        KaSession.getSessionData().then(session => {
 
-                    if (this.view.data[key]) {
-                        values = this.view.data[key];
-                    }
-                    let existingValue = values.indexOf(setValue);
-                    if (existingValue >= 0) {
-                        values.splice(existingValue, 1);
-                    } else {
-                        values.push(setValue);
-                    }
-
-
-                    this.setDataValue(key, values);
-
-                },
-                numberOfWords: function(key){
-                    if (this.data[key]) {
-                        return this.data[key].split(/\W/).length;
-                    } else {
-                        return 0;
-                    }
-                }
-            },
-            updated: () => {
-                this.validate(this.errorsGenerated);
+            let defaultDataString = this.getAttribute("data-default-data");
+            if (defaultDataString) {
+                let defaultData: any;
+                eval("defaultData = " + defaultDataString);
+                data = {...defaultData, ...data};
             }
+
+            // Create the view
+            this.view = new Kinivue({
+                el: this.querySelector("form"),
+                data: {
+                    data: data,
+                    errors: {},
+                    dateTime: new Date().toDateString() + " " + new Date().toLocaleTimeString(),
+                    date: new Date().toDateString(),
+                    valid: false,
+                    session: session
+                },
+                methods: {
+                    set: (key, value) => {
+                        this.setDataValue(key, value);
+                    },
+                    toggleMulti: (key, setValue) => {
+
+                        let values = [];
+
+                        if (this.view.data[key]) {
+                            values = this.view.data[key];
+                        }
+                        let existingValue = values.indexOf(setValue);
+                        if (existingValue >= 0) {
+                            values.splice(existingValue, 1);
+                        } else {
+                            values.push(setValue);
+                        }
+
+
+                        this.setDataValue(key, values);
+
+                    },
+                    numberOfWords: function (key) {
+                        if (this.data[key]) {
+                            return this.data[key].split(/\W/).length;
+                        } else {
+                            return 0;
+                        }
+                    }
+                },
+                updated: () => {
+                    this.validate(this.errorsGenerated);
+                }
+
+            });
 
         });
 
