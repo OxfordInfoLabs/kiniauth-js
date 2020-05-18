@@ -24,6 +24,7 @@ export default class KaRecaptcha extends HTMLElement {
 
         super();
 
+        console.log("BINGO");
 
         if (Configuration.recaptchaKey) {
 
@@ -68,6 +69,7 @@ export default class KaRecaptcha extends HTMLElement {
                     'sitekey': Configuration.recaptchaKey
                 });
             }
+
 
             this.rendered = true;
         } else {

@@ -2,6 +2,10 @@ import Kinivue from "../framework/kinivue";
 import Vue from "vue";
 import RequestParams from "../util/request-params";
 import KaSession from "./ka-session";
+import Api from "../framework/api";
+import KaRecaptcha from "./ka-recaptcha";
+import Configuration from "../configuration";
+
 
 /**
  * Register component
@@ -54,6 +58,7 @@ export default class KaDynamicForm extends HTMLElement {
                 data: {
                     data: data,
                     errors: {},
+                    serverErrors: {},
                     dateTime: new Date().toDateString() + " " + new Date().toLocaleTimeString(),
                     date: new Date().toDateString(),
                     valid: false,
@@ -86,6 +91,23 @@ export default class KaDynamicForm extends HTMLElement {
                             return this.data[key].split(/\W/).length;
                         } else {
                             return 0;
+                        }
+                    }, tippy(element) {
+                        let tippy = (<any>window).tippy;
+
+                        if (tippy) {
+
+
+                            if (element._tippy) {
+                                element._tippy.destroy();
+                            }
+
+
+                            tippy(element, {
+                                trigger: 'click'
+                            })
+
+                            element._tippy.show();
                         }
                     }
                 },
@@ -122,8 +144,55 @@ export default class KaDynamicForm extends HTMLElement {
 
         let data = this.view.data;
 
-        if (this.getAttribute("data-submit-url")) {
+        let submitUrl = this.getAttribute("data-submit-url");
 
+        let captcha = <KaRecaptcha>this.querySelector(Configuration.componentPrefix + "-recaptcha");
+        if (captcha && captcha.getResponse()) {
+            submitUrl += "?captcha=" + captcha.getResponse();
+        }
+
+
+        if (submitUrl) {
+            let api = new Api();
+            api.callAPI(submitUrl, data, "POST").then((response) => {
+
+                response.json().then((data) => {
+
+                    // If OK response, continue
+                    if (response.ok) {
+                        this.processSuccess(data);
+                    } else {
+
+                        let serverErrors = {};
+
+                        if (data.validationErrors) {
+                            serverErrors = data.validationErrors;
+                        } else {
+                            serverErrors = {
+                                "global": {
+                                    "error": {
+                                        "errorMessage": data.message
+                                    }
+                                }
+                            };
+                        }
+
+                        let errorString = "The following unexpected errors occurred:\n";
+                        for (var field in serverErrors) {
+                            let typedErrors = serverErrors[field];
+                            for (var type in typedErrors) {
+                                errorString += "\n" + typedErrors[type]["errorMessage"];
+                            }
+                        }
+
+                        alert(errorString);
+
+                    }
+
+                });
+
+
+            });
         } else {
 
             // Store the data in session storage
@@ -137,10 +206,12 @@ export default class KaDynamicForm extends HTMLElement {
     }
 
     // Continue to next page
-    private processSuccess() {
+    private processSuccess(identifier = null) {
 
-        if (this.getAttribute("data-success-url")) {
-            window.location.href = this.getAttribute("data-success-url");
+        let successUrl = this.getAttribute("data-success-url");
+
+        if (successUrl) {
+            window.location.href = successUrl + (identifier ? "?identifier=" + identifier : "");
         }
     }
 
@@ -179,6 +250,13 @@ export default class KaDynamicForm extends HTMLElement {
             })
 
         });
+
+        let captcha = <KaRecaptcha>this.querySelector(Configuration.componentPrefix + "-recaptcha");
+
+        if (captcha && !captcha.getResponse()) {
+            errors["recaptcha"] = "required";
+            valid = false;
+        }
 
         if (generateErrors) {
             if (Object.keys(this.view.errors).length != Object.keys(errors).length) {

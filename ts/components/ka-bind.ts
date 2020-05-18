@@ -9,6 +9,8 @@
 import Kinivue from "../framework/kinivue";
 import Api from "../framework/api";
 import RequestParams from "../util/request-params";
+import KaSession from "./ka-session";
+
 
 export default class KaBind extends HTMLElement {
 
@@ -35,7 +37,7 @@ export default class KaBind extends HTMLElement {
         }
 
 
-        let data = {};
+        let data: any = {};
 
         if (typeof model == "string") {
             try {
@@ -50,7 +52,8 @@ export default class KaBind extends HTMLElement {
             data = model;
 
 
-
+        data.session = {};
+        data.request = RequestParams.get();
 
         this.view = new Kinivue({
             el: this.querySelector(".vue-wrapper"),
@@ -60,6 +63,11 @@ export default class KaBind extends HTMLElement {
                     this.load();
                 }
             }
+        });
+
+
+        KaSession.getSessionData().then(sessionData => {
+            this.view.session = sessionData;
         });
 
         if (source && !this.getAttribute("defer-load")) {
