@@ -24,8 +24,6 @@ export default class KaRecaptcha extends HTMLElement {
 
         super();
 
-        console.log("BINGO");
-
         if (Configuration.recaptchaKey) {
 
             KaRecaptcha.instanceIndex++;
