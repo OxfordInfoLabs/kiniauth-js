@@ -13,21 +13,21 @@ import Configuration from "../configuration";
 export default class KaDynamicForm extends HTMLElement {
 
     // Kinibind view
-    private view;
+    protected view;
 
     private errorsGenerated = false;
 
 
     // Construct a dynamic form dynamically
-    constructor() {
+    constructor(extraData = {}, extraMethods = {}) {
 
         super();
-        this.init();
+        this.init(extraData, extraMethods);
 
     }
 
     // Initialise the dynamic form
-    private init() {
+    private init(extraData = {}, extraMethods = {}) {
 
         let store = this.getAttribute("data-store");
 
@@ -52,69 +52,60 @@ export default class KaDynamicForm extends HTMLElement {
                 data = {...defaultData, ...data};
             }
 
+            let model = {
+                data: data,
+                errors: {},
+                serverErrors: {},
+                dateTime: new Date().toDateString() + " " + new Date().toLocaleTimeString(),
+                date: new Date().toDateString(),
+                valid: false,
+                session: session
+            };
+
+            model = {...extraData, ...model};
+
+            let methods = {
+                set: (key, value) => {
+                    this.setDataValue(key, value);
+                },
+                toggleMulti: (key, setValue) => {
+
+                    let values = [];
+
+                    if (this.view.data[key]) {
+                        values = this.view.data[key];
+                    }
+                    let existingValue = values.indexOf(setValue);
+                    if (existingValue >= 0) {
+                        values.splice(existingValue, 1);
+                    } else {
+                        values.push(setValue);
+                    }
+
+
+                    this.setDataValue(key, values);
+
+                },
+                numberOfWords: function (key) {
+                    if (this.data[key]) {
+                        return this.data[key].split(/\W/).length;
+                    } else {
+                        return 0;
+                    }
+                }
+            };
+
+            methods = {...extraMethods, ...methods};
+
+
             // Create the view
             this.view = new Kinivue({
                 el: this.querySelector("form"),
-                data: {
-                    data: data,
-                    errors: {},
-                    serverErrors: {},
-                    dateTime: new Date().toDateString() + " " + new Date().toLocaleTimeString(),
-                    date: new Date().toDateString(),
-                    valid: false,
-                    session: session
-                },
-                methods: {
-                    set: (key, value) => {
-                        this.setDataValue(key, value);
-                    },
-                    toggleMulti: (key, setValue) => {
-
-                        let values = [];
-
-                        if (this.view.data[key]) {
-                            values = this.view.data[key];
-                        }
-                        let existingValue = values.indexOf(setValue);
-                        if (existingValue >= 0) {
-                            values.splice(existingValue, 1);
-                        } else {
-                            values.push(setValue);
-                        }
-
-
-                        this.setDataValue(key, values);
-
-                    },
-                    numberOfWords: function (key) {
-                        if (this.data[key]) {
-                            return this.data[key].split(/\W/).length;
-                        } else {
-                            return 0;
-                        }
-                    }, tippy(element) {
-                        let tippy = (<any>window).tippy;
-
-                        if (tippy) {
-
-
-                            if (element._tippy) {
-                                element._tippy.destroy();
-                            }
-
-
-                            tippy(element, {
-                                trigger: 'click'
-                            })
-
-                            element._tippy.show();
-                        }
-                    }
-                },
+                data: model,
+                methods: methods,
                 updated: () => {
                     this.validate(this.errorsGenerated);
                 }
-
             });
 
         });
@@ -280,7 +271,7 @@ export default class KaDynamicForm extends HTMLElement {
     /**
      * Set data value ensuring all is bound
      */
-    private setDataValue(key, value) {
+    protected setDataValue(key, value) {
         Vue.set(this.view.data, key, value);
     }
 

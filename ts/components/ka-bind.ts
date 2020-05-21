@@ -42,14 +42,14 @@ export default class KaBind extends HTMLElement {
         if (typeof model == "string") {
             try {
                 let jsonModel = JSON.parse(model);
-                data = jsonModel;
+                data = jsonModel ? jsonModel : {};
             } catch (e) {
                 data[model] = {};
             }
 
 
         } else if (typeof model == "object")
-            data = model;
+            data = model ? model : {};
 
 
         data.session = {};
