@@ -63,9 +63,11 @@ export default class KaRecaptcha extends HTMLElement {
                 }, 500);
                 return;
             } else {
+
                 this.instanceId = window["grecaptcha"].render(this.componentId, {
                     'sitekey': Configuration.recaptchaKey
                 });
+
             }
 
 

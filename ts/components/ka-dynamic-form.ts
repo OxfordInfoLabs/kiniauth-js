@@ -5,6 +5,7 @@ import KaSession from "./ka-session";
 import Api from "../framework/api";
 import KaRecaptcha from "./ka-recaptcha";
 import Configuration from "../configuration";
+import ElementSpinner from "../util/element-spinner";
 
 
 /**
@@ -131,7 +132,7 @@ export default class KaDynamicForm extends HTMLElement {
 
 
     // Process submission
-    private processSubmission() {
+    protected processSubmission() {
 
         let data = this.view.data;
 
@@ -141,6 +142,9 @@ export default class KaDynamicForm extends HTMLElement {
         if (captcha && captcha.getResponse()) {
             submitUrl += "?captcha=" + captcha.getResponse();
         }
+
+
+        this.setButtonSpinStatus(true);
 
 
         if (submitUrl) {
@@ -178,7 +182,10 @@ export default class KaDynamicForm extends HTMLElement {
 
                         alert(errorString);
 
+                        this.setButtonSpinStatus(false);
+
                     }
+
 
                 });
 
@@ -192,9 +199,12 @@ export default class KaDynamicForm extends HTMLElement {
 
             // Process success
             this.processSuccess();
+
         }
 
+
     }
+
 
     // Continue to next page
     private processSuccess(identifier = null) {
@@ -203,11 +213,13 @@ export default class KaDynamicForm extends HTMLElement {
 
         if (successUrl) {
             window.location.href = successUrl + (identifier ? "?identifier=" + identifier : "");
+        } else {
+            this.setButtonSpinStatus(false);
         }
     }
 
     // Validate the form
-    private validate(generateErrors) {
+    protected validate(generateErrors) {
 
         let valid = true;
         let errors = {};
@@ -275,4 +287,17 @@ export default class KaDynamicForm extends HTMLElement {
         Vue.set(this.view.data, key, value);
     }
 
+
+    private setButtonSpinStatus(spinning) {
+        // Set spinning status
+        this.querySelectorAll("[type='submit']").forEach((element: any) => {
+
+            if (spinning) {
+                ElementSpinner.spinElement(element);
+            } else {
+                ElementSpinner.restoreElement(element);
+            }
+
+        });
+    }
 }
