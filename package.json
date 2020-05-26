@@ -40,6 +40,7 @@
   "dependencies": {
     "@webcomponents/custom-elements": "^1.2.2",
     "lodash": "^4.17.15",
+    "moment": "^2.26.0",
     "tinybind": "^1.0.0"
   }
 }

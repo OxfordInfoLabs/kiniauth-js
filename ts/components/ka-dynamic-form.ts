@@ -60,15 +60,17 @@ export default class KaDynamicForm extends HTMLElement {
         model = {...extraData, ...model};
 
         let methods = {
-            set: (key, value) => {
+            setDataItem: (key, value) => {
                 this.setDataItem(key, value);
             },
             toggleMulti: (key, setValue) => {
 
                 let values = [];
 
-                if (this.view.data[key]) {
-                    values = this.view.data[key];
+                let data = this.view.getModelItem("data");
+
+                if (data[key] instanceof Array) {
+                    values = data[key];
                 }
                 let existingValue = values.indexOf(setValue);
                 if (existingValue >= 0) {
@@ -77,16 +79,8 @@ export default class KaDynamicForm extends HTMLElement {
                     values.push(setValue);
                 }
 
-
                 this.setDataItem(key, values);
 
-            },
-            numberOfWords: function (key) {
-                if (this.data[key]) {
-                    return this.data[key].split(/\W/).length;
-                } else {
-                    return 0;
-                }
             }
         };
 
@@ -110,6 +104,15 @@ export default class KaDynamicForm extends HTMLElement {
                 this.processSubmission();
             }
 
+        })
+
+        // Add change and click listeners to keep valid in check.
+        this.addEventListener("input", () => {
+            this.validate(false);
+        })
+
+        this.addEventListener("click", () => {
+            this.validate(false);
         })
 
         // Do an initial validation to generate the valid flag
@@ -255,20 +258,17 @@ export default class KaDynamicForm extends HTMLElement {
 
         if (generateErrors) {
             if (Object.keys(modelErrors).length != Object.keys(errors).length) {
-                this.view.setModelItem(errors, errors);
+                this.view.setModelItem("errors", errors);
                 this.errorsGenerated = true;
             }
         } else {
 
             if (Object.keys(modelErrors).length != 0) {
-                this.view.setModelItem(errors, {});
+                this.view.setModelItem("errors", {});
             }
         }
 
-        let currentValid = this.view.getModelItem(valid);
-
-        if (valid != currentValid)
-            this.view.setModelItem(valid, valid);
+        this.view.setModelItem("valid", valid);
 
         return valid;
     }
@@ -295,7 +295,7 @@ export default class KaDynamicForm extends HTMLElement {
      * @param value
      */
     protected setDataItem(key, value) {
-        let data = this.view.getModelItem(key);
+        let data = this.view.getModelItem("data");
         data[key] = value;
     }
 }
