@@ -1,6 +1,6 @@
 {
   "name": "kiniauth",
-  "version": "0.0.16",
+  "version": "0.0.18",
   "description": "Kiniauth Web Components",
   "main": "index.js",
   "files": [
@@ -11,7 +11,7 @@
     "watch": "webpack --config webpack.config.js --watch",
     "build:production": "webpack --config webpack.config.js -p --display-modules",
     "sass": "node-sass -w sass --output dist",
-    "publish:project": "npm run production-build; bump patch; npm publish"
+    "publish:project": "npm run build:production; bump patch; npm publish"
   },
   "repository": {
     "type": "git",
@@ -38,9 +38,8 @@
     "webpack-dev-server": "3.1.11"
   },
   "dependencies": {
-    "@types/vue": "^2.0.0",
     "@webcomponents/custom-elements": "^1.2.2",
     "lodash": "^4.17.15",
-    "vue": "^2.6.11"
+    "tinybind": "^1.0.0"
   }
 }

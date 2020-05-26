@@ -6,10 +6,9 @@
  * A sub container with class vue-wrapper must be supplied.
  *
  */
-import Kinivue from "../framework/kinivue";
 import Api from "../framework/api";
 import RequestParams from "../util/request-params";
-import KaSession from "./ka-session";
+import Kinibind from "../framework/kinibind";
 
 
 export default class KaBind extends HTMLElement {
@@ -51,24 +50,13 @@ export default class KaBind extends HTMLElement {
         } else if (typeof model == "object")
             data = model ? model : {};
 
-
-        data.session = {};
-        data.request = RequestParams.get();
-
-        this.view = new Kinivue({
-            el: this.querySelector(".vue-wrapper"),
-            data: data,
-            methods: {
-                load: () => {
-                    this.load();
-                }
-            }
-        });
+        data.load = () => {
+            this.load();
+        };
 
 
-        KaSession.getSessionData().then(sessionData => {
-            this.view.session = sessionData;
-        });
+        this.view = new Kinibind(this, data);
+
 
         if (source && !this.getAttribute("defer-load")) {
             this.load();

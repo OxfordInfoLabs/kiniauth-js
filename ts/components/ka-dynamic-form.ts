@@ -1,11 +1,9 @@
-import Kinivue from "../framework/kinivue";
-import Vue from "vue";
 import RequestParams from "../util/request-params";
-import KaSession from "./ka-session";
 import Api from "../framework/api";
 import KaRecaptcha from "./ka-recaptcha";
 import Configuration from "../configuration";
 import ElementSpinner from "../util/element-spinner";
+import Kinibind from "../framework/kinibind";
 
 
 /**
@@ -44,72 +42,61 @@ export default class KaDynamicForm extends HTMLElement {
         let data = rawData ? JSON.parse(rawData) : {};
 
 
-        KaSession.getSessionData().then(session => {
+        let defaultDataString = this.getAttribute("data-default-data");
+        if (defaultDataString) {
+            let defaultData: any = JSON.parse(defaultDataString.trim());
+            data = {...defaultData, ...data};
+        }
 
-            let defaultDataString = this.getAttribute("data-default-data");
-            if (defaultDataString) {
-                let defaultData: any;
-                eval("defaultData = " + defaultDataString);
-                data = {...defaultData, ...data};
+        let model = {
+            data: data,
+            errors: {},
+            serverErrors: {},
+            dateTime: new Date().toDateString() + " " + new Date().toLocaleTimeString(),
+            date: new Date().toDateString(),
+            valid: false
+        };
+
+        model = {...extraData, ...model};
+
+        let methods = {
+            set: (key, value) => {
+                this.setDataItem(key, value);
+            },
+            toggleMulti: (key, setValue) => {
+
+                let values = [];
+
+                if (this.view.data[key]) {
+                    values = this.view.data[key];
+                }
+                let existingValue = values.indexOf(setValue);
+                if (existingValue >= 0) {
+                    values.splice(existingValue, 1);
+                } else {
+                    values.push(setValue);
+                }
+
+
+                this.setDataItem(key, values);
+
+            },
+            numberOfWords: function (key) {
+                if (this.data[key]) {
+                    return this.data[key].split(/\W/).length;
+                } else {
+                    return 0;
+                }
             }
+        };
 
-            let model = {
-                data: data,
-                errors: {},
-                serverErrors: {},
-                dateTime: new Date().toDateString() + " " + new Date().toLocaleTimeString(),
-                date: new Date().toDateString(),
-                valid: false,
-                session: session
-            };
-
-            model = {...extraData, ...model};
-
-            let methods = {
-                set: (key, value) => {
-                    this.setDataValue(key, value);
-                },
-                toggleMulti: (key, setValue) => {
-
-                    let values = [];
-
-                    if (this.view.data[key]) {
-                        values = this.view.data[key];
-                    }
-                    let existingValue = values.indexOf(setValue);
-                    if (existingValue >= 0) {
-                        values.splice(existingValue, 1);
-                    } else {
-                        values.push(setValue);
-                    }
+        model = {...model, ...extraMethods, ...methods};
 
 
-                    this.setDataValue(key, values);
-
-                },
-                numberOfWords: function (key) {
-                    if (this.data[key]) {
-                        return this.data[key].split(/\W/).length;
-                    } else {
-                        return 0;
-                    }
-                }
-            };
-
-            methods = {...extraMethods, ...methods};
-
-
-            // Create the view
-            this.view = new Kinivue({
-                el: this.querySelector("form"),
-                data: model,
-                methods: methods,
-                updated: () => {
-                    this.validate(this.errorsGenerated);
-                }
-            });
-
-        });
+        // Create the view
+        this.view = new Kinibind(this,
+            model
+        );
 
 
         this.addEventListener("submit", (event) => {
@@ -134,7 +121,7 @@ export default class KaDynamicForm extends HTMLElement {
     // Process submission
     protected processSubmission() {
 
-        let data = this.view.data;
+        let data = this.view.getModelItem("data");
 
         let submitUrl = this.getAttribute("data-submit-url");
 
@@ -228,11 +215,14 @@ export default class KaDynamicForm extends HTMLElement {
             return false;
         }
 
+        let data = this.view.getModelItem("data");
+
+
         this.querySelectorAll("[data-validation]").forEach((item) => {
             let field = item.getAttribute("data-field");
             let validations = item.getAttribute("data-validation").split(",");
 
-            let dataValue = this.view.data[field];
+            let dataValue = data[field];
 
             // Now validate the value
             validations.forEach((validation) => {
@@ -261,30 +251,26 @@ export default class KaDynamicForm extends HTMLElement {
             valid = false;
         }
 
+        let modelErrors = this.view.getModelItem("errors");
+
         if (generateErrors) {
-            if (Object.keys(this.view.errors).length != Object.keys(errors).length) {
-                this.view.errors = errors;
+            if (Object.keys(modelErrors).length != Object.keys(errors).length) {
+                this.view.setModelItem(errors, errors);
                 this.errorsGenerated = true;
             }
         } else {
 
-            if (Object.keys(this.view.errors).length != 0) {
-                this.view.errors = {};
+            if (Object.keys(modelErrors).length != 0) {
+                this.view.setModelItem(errors, {});
             }
         }
 
-        if (valid != this.view.valid)
-            this.view.valid = valid;
+        let currentValid = this.view.getModelItem(valid);
+
+        if (valid != currentValid)
+            this.view.setModelItem(valid, valid);
 
         return valid;
-    }
-
-
-    /**
-     * Set data value ensuring all is bound
-     */
-    protected setDataValue(key, value) {
-        Vue.set(this.view.data, key, value);
     }
 
 
@@ -299,5 +285,17 @@ export default class KaDynamicForm extends HTMLElement {
             }
 
         });
+    }
+
+
+    /**
+     * Set a data item
+     *
+     * @param key
+     * @param value
+     */
+    protected setDataItem(key, value) {
+        let data = this.view.getModelItem(key);
+        data[key] = value;
     }
 }

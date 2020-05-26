@@ -2,7 +2,8 @@ import RequestParams from '../util/request-params';
 import Api from '../framework/api';
 import StandardForm from './standard-form';
 import map from 'lodash/map';
-import Kinivue from "../framework/kinivue";
+import Kinibind from "../framework/kinibind";
+
 
 /**
  * Register component
@@ -51,12 +52,10 @@ export default class KaContact extends StandardForm {
             type: this.contactType
         };
 
-        let view = new Kinivue({
-            el: this.querySelector(".vue-wrapper"),
-            data: {
+        new Kinibind(this,
+            {
                 countries: this.countryCodes()
-            }
-        });
+            });
 
         const contactId = RequestParams.get().contact;
         if (contactId) {

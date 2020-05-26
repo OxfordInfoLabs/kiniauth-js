@@ -5,8 +5,5 @@
     "target": "es6",
     "allowJs": true,
     "moduleResolution": "node"
-  },
-  "include": [
-    "node_modules/vue/types"
-  ]
+  }
 }

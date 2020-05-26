@@ -10,13 +10,11 @@ import KaRegister from './components/ka-register';
 import KaActivate from './components/ka-activate';
 import KaPasswordReset from './components/ka-password-reset';
 import KaNewPassword from './components/ka-new-password';
-import KaSession from './components/ka-session';
 import KaContact from './components/ka-contact';
 import KaInvitation from './components/ka-invitation';
 import KaSignout from './components/ka-signout';
 import KaDynamicForm from "./components/ka-dynamic-form";
 import KaBind from "./components/ka-bind";
-import KaAuth from "./components/ka-auth";
 
 
 export default class Kiniauth {
@@ -56,8 +54,6 @@ export default class Kiniauth {
         customElements.define('ka-new-password', KaNewPassword);
         customElements.define('ka-register', KaRegister);
         customElements.define('ka-activate', KaActivate);
-        customElements.define('ka-session', KaSession);
-        customElements.define('ka-auth', KaAuth);
         customElements.define('ka-contact', KaContact);
         customElements.define('ka-invitation', KaInvitation);
         customElements.define('ka-dynamic-form', KaDynamicForm);
