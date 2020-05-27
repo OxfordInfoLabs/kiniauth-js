@@ -143,7 +143,11 @@ export default class Kinibind {
         }
 
         tinybind.formatters.split = function (value, splitCharacter = ",") {
-            return value.split(splitCharacter);
+            return value ? value.split(splitCharacter) : [];
+        }
+
+        tinybind.formatters.substring = function (value, start, end) {
+            return value ? value.substring(start, end) : '';
         }
 
         tinybind.formatters.words = function (value) {
@@ -169,6 +173,15 @@ export default class Kinibind {
                 return value.indexOf(contains) >= 0
             else if (value) {
                 return value.includes(contains);
+            }
+            return false;
+        }
+
+        tinybind.formatters.length = function (value, contains) {
+            if (value instanceof Array)
+                return value.length;
+            else if (value) {
+                return value.length;
             }
             return false;
         }
@@ -205,6 +218,29 @@ export default class Kinibind {
         // Comparison and logic formatters
         tinybind.formatters.equals = function (value, otherValue) {
             return value == otherValue;
+        }
+
+        tinybind.formatters.notequals = function (value, otherValue) {
+            return value != otherValue;
+        }
+
+
+        tinybind.formatters.gt = function (value, otherValue) {
+            return value > otherValue;
+        }
+
+
+        tinybind.formatters.gte = function (value, otherValue) {
+            return value >= otherValue;
+        }
+
+        tinybind.formatters.lt = function (value, otherValue) {
+            return value < otherValue;
+        }
+
+
+        tinybind.formatters.lte = function (value, otherValue) {
+            return value <= otherValue;
         }
 
         // And logic
@@ -279,6 +315,41 @@ export default class Kinibind {
         // One way checked if binder
         tinybind.binders["checked-if"] = (el, value) => {
             el.checked = value;
+        };
+
+
+        // Toggle binding allows for elements to set model on click.
+        tinybind.binders["toggle"] = {
+            publishes: true,
+            bind: function (el) {
+
+                let observer = this.observer;
+
+                let toggleValues = null;
+                if (el.getAttribute("toggle-values")) {
+                    toggleValues = el.getAttribute("toggle-values").split(",");
+                }
+
+                if (!this.callback) {
+                    this.callback = function (event) {
+                        event.stopPropagation();
+
+                        if (toggleValues) {
+                            let position = toggleValues.indexOf(observer.value());
+                            position++;
+                            position = position % toggleValues.length;
+                            observer.setValue(toggleValues[position]);
+                        } else {
+                            observer.setValue(!observer.value());
+                        }
+                    };
+                }
+
+                el.addEventListener("click", this.callback);
+
+            }, unbind: function (el) {
+                el.removeEventListener("click", this.callback);
+            }
         };
 
     }
