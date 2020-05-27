@@ -298,4 +298,15 @@ export default class KaDynamicForm extends HTMLElement {
         let data = this.view.getModelItem("data");
         data[key] = value;
     }
+
+
+    /**
+     * Get data item
+     *
+     * @param key
+     */
+    protected getDataItem(key) {
+        let data = this.view.getModelItem("data");
+        return data[key];
+    }
 }

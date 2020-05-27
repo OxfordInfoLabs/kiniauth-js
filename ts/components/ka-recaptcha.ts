@@ -97,7 +97,10 @@ export default class KaRecaptcha extends HTMLElement {
      * Check whether or not this recaptcha is completed.
      */
     public getResponse(): string {
-        return window["grecaptcha"].getResponse(this.instanceId);
+        if (window['grecaptcha'])
+            return window["grecaptcha"].getResponse(this.instanceId);
+        else
+            return null;
     }
 
 

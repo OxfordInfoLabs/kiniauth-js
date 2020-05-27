@@ -156,8 +156,39 @@ export default class Kinibind {
 
 
         // Array operations
+        tinybind.formatters.join = function (value, joinString) {
+            if (value instanceof Array) {
+                return value.join(joinString);
+            }
+        }
+
+
+        // Array / string operations
         tinybind.formatters.contains = function (value, contains) {
-            return value instanceof Array ? value.indexOf(contains) >= 0 : false;
+            if (value instanceof Array)
+                return value.indexOf(contains) >= 0
+            else if (value) {
+                return value.includes(contains);
+            }
+            return false;
+        }
+
+
+        // Object operations
+        tinybind.formatters.keys = function (value) {
+            return value ? Object.keys(value) : [];
+        }
+
+        tinybind.formatters.values = function (value) {
+            if (value) {
+                let values = [];
+                Object.keys(value).forEach(key => {
+                    values.push(value[key]);
+                })
+                return values;
+            } else {
+                return [];
+            }
         }
 
 
@@ -195,6 +226,11 @@ export default class Kinibind {
         // Or-not logic
         tinybind.formatters.orNot = function (value, otherValue) {
             return value || !otherValue;
+        }
+
+        // Ternary expression
+        tinybind.formatters.ternary = function (expression, trueValue, falseValue) {
+            return expression ? trueValue : falseValue;
         }
 
 
