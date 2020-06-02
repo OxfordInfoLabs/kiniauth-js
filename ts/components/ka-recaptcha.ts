@@ -57,7 +57,7 @@ export default class KaRecaptcha extends HTMLElement {
             instance.id = this.componentId;
             this.appendChild(instance);
 
-            if (!window["grecaptcha"]) {
+            if (!window["grecaptcha"] || !window["grecaptcha"].render) {
                 setTimeout(() => {
                     this.render()
                 }, 500);
