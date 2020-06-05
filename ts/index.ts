@@ -15,6 +15,7 @@ import KaInvitation from './components/ka-invitation';
 import KaSignout from './components/ka-signout';
 import KaDynamicForm from "./components/ka-dynamic-form";
 import KaBind from "./components/ka-bind";
+import KaFileUpload from "./components/ka-file-upload";
 
 
 export default class Kiniauth {
@@ -57,6 +58,7 @@ export default class Kiniauth {
         customElements.define('ka-contact', KaContact);
         customElements.define('ka-invitation', KaInvitation);
         customElements.define('ka-dynamic-form', KaDynamicForm);
+        customElements.define('ka-file-upload', KaFileUpload);
 
 
     }

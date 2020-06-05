@@ -166,6 +166,18 @@ export default class Kinibind {
             }
         }
 
+        tinybind.formatters.memberValues = function (value, member) {
+            let values = [];
+            if (value instanceof Array) {
+                value.forEach(value => {
+                    if (value instanceof Object) {
+                        values.push(value[member]);
+                    }
+                });
+            }
+            return values;
+        }
+
 
         // Array / string operations
         tinybind.formatters.contains = function (value, contains) {

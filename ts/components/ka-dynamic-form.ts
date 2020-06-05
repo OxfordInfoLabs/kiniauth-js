@@ -4,6 +4,7 @@ import KaRecaptcha from "./ka-recaptcha";
 import Configuration from "../configuration";
 import ElementSpinner from "../util/element-spinner";
 import Kinibind from "../framework/kinibind";
+import KaFileUpload from "./ka-file-upload";
 
 
 /**
@@ -124,17 +125,69 @@ export default class KaDynamicForm extends HTMLElement {
     // Process submission
     protected processSubmission() {
 
+        let captcha = <KaRecaptcha>this.querySelector(Configuration.componentPrefix + "-recaptcha");
+        let captchaResponse = null;
+        if (captcha) {
+            captchaResponse = captcha.getResponse();
+        }
+
+        // Spin the button
+        this.setButtonSpinStatus(true);
+
+        let fileUploaders = this.querySelectorAll(Configuration.componentPrefix + "-file-upload");
+        if (fileUploaders.length > 0) {
+
+            let fileUploaderArray = [];
+            fileUploaders.forEach((item) => {
+                fileUploaderArray.push(item);
+            })
+
+            this.processFileUploaders(fileUploaderArray, captchaResponse).then(() => {
+                this.doSubmit(captchaResponse);
+            }).catch((e) => {
+                alert(e);
+                this.setButtonSpinStatus(false);
+            })
+
+        } else {
+            this.doSubmit(captchaResponse);
+        }
+
+    }
+
+    // Process file uploaders sequentiallhy
+    private processFileUploaders(fileUploaders, captchaResponse): Promise<any> {
+
+        return new Promise<any>((success, failure) => {
+            if (fileUploaders.length > 0) {
+                let fileUploader = fileUploaders.shift();
+                (<KaFileUpload>fileUploader).upload(captchaResponse).then(() => {
+                    this.processFileUploaders(fileUploaders, captchaResponse).then(() => {
+                        success();
+                    });
+                }).catch(message => {
+                    failure(message);
+                });
+            } else {
+                success();
+            }
+
+        });
+
+
+    }
+
+    // Actually do the submot
+    private doSubmit(captchaResponse: string) {
+
+
         let data = this.view.getModelItem("data");
 
         let submitUrl = this.getAttribute("data-submit-url");
 
-        let captcha = <KaRecaptcha>this.querySelector(Configuration.componentPrefix + "-recaptcha");
-        if (captcha && captcha.getResponse()) {
-            submitUrl += "?captcha=" + captcha.getResponse();
+        if (captchaResponse) {
+            submitUrl += "?captcha=" + captchaResponse;
         }
-
-
-        this.setButtonSpinStatus(true);
 
 
         if (submitUrl) {
@@ -191,18 +244,15 @@ export default class KaDynamicForm extends HTMLElement {
             this.processSuccess();
 
         }
-
-
     }
 
-
-    // Continue to next page
+// Continue to next page
     private processSuccess(identifier = null) {
 
         let successUrl = this.getAttribute("data-success-url");
 
         if (successUrl) {
-            window.location.href = successUrl + (identifier ? "?identifier=" + identifier : "");
+           window.location.href = successUrl + (identifier ? "?identifier=" + identifier : "");
         } else {
             this.setButtonSpinStatus(false);
         }
@@ -241,7 +291,12 @@ export default class KaDynamicForm extends HTMLElement {
                         break;
                 }
 
+                if (item.tagName.toLowerCase().includes("-file-upload")) {
+                    fieldValid = fieldValid && (<KaFileUpload>item).validate(validation);
+                }
+
                 if (!fieldValid) errors[field] = validation;
+
                 valid = valid && fieldValid;
             })
 
@@ -253,6 +308,7 @@ export default class KaDynamicForm extends HTMLElement {
             errors["recaptcha"] = "required";
             valid = false;
         }
+
 
         let modelErrors = this.view.getModelItem("errors");
 
