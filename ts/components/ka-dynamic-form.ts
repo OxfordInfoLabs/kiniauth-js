@@ -3,7 +3,7 @@ import Api from "../framework/api";
 import KaRecaptcha from "./ka-recaptcha";
 import Configuration from "../configuration";
 import ElementSpinner from "../util/element-spinner";
-import Kinibind from "../framework/kinibind";
+import AuthKinibind from "../framework/auth-kinibind";
 import KaFileUpload from "./ka-file-upload";
 
 
@@ -89,7 +89,7 @@ export default class KaDynamicForm extends HTMLElement {
 
 
         // Create the view
-        this.view = new Kinibind(this,
+        this.view = new AuthKinibind(this,
             model
         );
 

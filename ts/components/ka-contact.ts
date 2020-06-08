@@ -2,7 +2,7 @@ import RequestParams from '../util/request-params';
 import Api from '../framework/api';
 import StandardForm from './standard-form';
 import map from 'lodash/map';
-import Kinibind from "../framework/kinibind";
+import AuthKinibind from "../framework/auth-kinibind";
 
 
 /**
@@ -52,7 +52,7 @@ export default class KaContact extends StandardForm {
             type: this.contactType
         };
 
-        new Kinibind(this,
+        new AuthKinibind(this,
             {
                 countries: this.countryCodes()
             });

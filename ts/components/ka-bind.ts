@@ -8,7 +8,7 @@
  */
 import Api from "../framework/api";
 import RequestParams from "../util/request-params";
-import Kinibind from "../framework/kinibind";
+import AuthKinibind from "../framework/auth-kinibind";
 
 
 export default class KaBind extends HTMLElement {
@@ -55,7 +55,7 @@ export default class KaBind extends HTMLElement {
         };
 
 
-        this.view = new Kinibind(this, data);
+        this.view = new AuthKinibind(this, data);
 
 
         if (source && !this.getAttribute("defer-load")) {
