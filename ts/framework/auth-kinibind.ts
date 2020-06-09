@@ -1,4 +1,3 @@
-import tinybind from "tinybind";
 import RequestParams from "../util/request-params";
 import Session from "./session";
 import Kinibind from "kinibind/ts/kinibind";

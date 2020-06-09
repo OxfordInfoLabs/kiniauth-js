@@ -27,7 +27,6 @@
   },
   "homepage": "https://github.com/OxfordInfoLabs/kiniauth-js#readme",
   "devDependencies": {
-    "@types/node": "^10.11.3",
     "concurrently": "^4.1.0",
     "node-sass": "^4.13.1",
     "source-map-loader": "0.2.3",
@@ -42,7 +41,9 @@
   },
   "dependencies": {
     "@webcomponents/custom-elements": "^1.2.2",
-    "kinibind": "0.0.60",
-    "lodash": "^4.17.15"
+    "kinibind": "0.0.61"
+  },
+  "peerDependencies": {
+    "@types/node": "^10.11.3"
   }
 }

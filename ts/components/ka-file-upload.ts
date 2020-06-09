@@ -99,7 +99,7 @@ export default class KaFileUpload extends HTMLElement {
         return new Promise<any>((done, reject) => {
 
             // Shortcut if upload has already been done.
-            if (this.uploaded) {
+            if (this.uploaded || this.values.length == 0) {
                 done();
                 return;
             }
