@@ -3,7 +3,8 @@ import Api from "../framework/api";
 import KaRecaptcha from "./ka-recaptcha";
 import Configuration from "../configuration";
 import ElementSpinner from "../util/element-spinner";
-import Kinibind from "../framework/kinibind";
+import AuthKinibind from "../framework/auth-kinibind";
+import KaFileUpload from "./ka-file-upload";
 
 
 /**
@@ -67,7 +68,7 @@ export default class KaDynamicForm extends HTMLElement {
 
                 let values = [];
 
-                let data = this.view.getModelItem("data");
+                let data = this.view.model.data;
 
                 if (data[key] instanceof Array) {
                     values = data[key];
@@ -88,7 +89,7 @@ export default class KaDynamicForm extends HTMLElement {
 
 
         // Create the view
-        this.view = new Kinibind(this,
+        this.view = new AuthKinibind(this,
             model
         );
 
@@ -124,17 +125,69 @@ export default class KaDynamicForm extends HTMLElement {
     // Process submission
     protected processSubmission() {
 
-        let data = this.view.getModelItem("data");
+        let captcha = <KaRecaptcha>this.querySelector(Configuration.componentPrefix + "-recaptcha");
+        let captchaResponse = null;
+        if (captcha) {
+            captchaResponse = captcha.getResponse();
+        }
+
+        // Spin the button
+        this.setButtonSpinStatus(true);
+
+        let fileUploaders = this.querySelectorAll(Configuration.componentPrefix + "-file-upload");
+        if (fileUploaders.length > 0) {
+
+            let fileUploaderArray = [];
+            fileUploaders.forEach((item) => {
+                fileUploaderArray.push(item);
+            })
+
+            this.processFileUploaders(fileUploaderArray, captchaResponse).then(() => {
+                this.doSubmit(captchaResponse);
+            }).catch((e) => {
+                alert(e);
+                this.setButtonSpinStatus(false);
+            })
+
+        } else {
+            this.doSubmit(captchaResponse);
+        }
+
+    }
+
+    // Process file uploaders sequentiallhy
+    private processFileUploaders(fileUploaders, captchaResponse): Promise<any> {
+
+        return new Promise<any>((success, failure) => {
+            if (fileUploaders.length > 0) {
+                let fileUploader = fileUploaders.shift();
+                (<KaFileUpload>fileUploader).upload(captchaResponse).then(() => {
+                    this.processFileUploaders(fileUploaders, captchaResponse).then(() => {
+                        success();
+                    });
+                }).catch(message => {
+                    failure(message);
+                });
+            } else {
+                success();
+            }
+
+        });
+
+
+    }
+
+    // Actually do the submot
+    private doSubmit(captchaResponse: string) {
+
+
+        let data = this.view.model.data;
 
         let submitUrl = this.getAttribute("data-submit-url");
 
-        let captcha = <KaRecaptcha>this.querySelector(Configuration.componentPrefix + "-recaptcha");
-        if (captcha && captcha.getResponse()) {
-            submitUrl += "?captcha=" + captcha.getResponse();
+        if (captchaResponse) {
+            submitUrl += "?captcha=" + captchaResponse;
         }
-
-
-        this.setButtonSpinStatus(true);
 
 
         if (submitUrl) {
@@ -191,12 +244,9 @@ export default class KaDynamicForm extends HTMLElement {
             this.processSuccess();
 
         }
-
-
     }
 
-
-    // Continue to next page
+// Continue to next page
     private processSuccess(identifier = null) {
 
         let successUrl = this.getAttribute("data-success-url");
@@ -218,7 +268,7 @@ export default class KaDynamicForm extends HTMLElement {
             return false;
         }
 
-        let data = this.view.getModelItem("data");
+        let data = this.view.model.data;
 
 
         this.querySelectorAll("[data-validation]").forEach((item) => {
@@ -241,7 +291,12 @@ export default class KaDynamicForm extends HTMLElement {
                         break;
                 }
 
+                if (item.tagName.toLowerCase().includes("-file-upload")) {
+                    fieldValid = fieldValid && (<KaFileUpload>item).validate(validation);
+                }
+
                 if (!fieldValid) errors[field] = validation;
+
                 valid = valid && fieldValid;
             })
 
@@ -254,21 +309,22 @@ export default class KaDynamicForm extends HTMLElement {
             valid = false;
         }
 
-        let modelErrors = this.view.getModelItem("errors");
+
+        let modelErrors = this.view.model.errors;
 
         if (generateErrors) {
             if (Object.keys(modelErrors).length != Object.keys(errors).length) {
-                this.view.setModelItem("errors", errors);
+                this.view.model.errors = errors;
                 this.errorsGenerated = true;
             }
         } else {
 
             if (Object.keys(modelErrors).length != 0) {
-                this.view.setModelItem("errors", {});
+                this.view.model.errors = {};
             }
         }
 
-        this.view.setModelItem("valid", valid);
+        this.view.model.valid = valid;
 
         return valid;
     }
@@ -295,7 +351,7 @@ export default class KaDynamicForm extends HTMLElement {
      * @param value
      */
     protected setDataItem(key, value) {
-        let data = this.view.getModelItem("data");
+        let data = this.view.model.data;
         data[key] = value;
     }
 
@@ -306,7 +362,7 @@ export default class KaDynamicForm extends HTMLElement {
      * @param key
      */
     protected getDataItem(key) {
-        let data = this.view.getModelItem("data");
+        let data = this.view.model.data;
         return data[key];
     }
 }

@@ -1,8 +1,7 @@
 import RequestParams from '../util/request-params';
 import Api from '../framework/api';
 import StandardForm from './standard-form';
-import map from 'lodash/map';
-import Kinibind from "../framework/kinibind";
+import AuthKinibind from "../framework/auth-kinibind";
 
 
 /**
@@ -52,7 +51,7 @@ export default class KaContact extends StandardForm {
             type: this.contactType
         };
 
-        new Kinibind(this,
+        new AuthKinibind(this,
             {
                 countries: this.countryCodes()
             });
@@ -65,9 +64,9 @@ export default class KaContact extends StandardForm {
 
     public submitForm(fieldValues: any): Promise<any> {
         const api = new Api();
-        map(fieldValues, (value, field) => {
-            this.contactObject[field] = value;
-        });
+        for (var field in fieldValues) {
+            this.contactObject[field] = fieldValues[field];
+        }
 
         return api.saveContact(this.contactObject);
     }

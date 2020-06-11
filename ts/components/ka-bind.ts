@@ -8,7 +8,7 @@
  */
 import Api from "../framework/api";
 import RequestParams from "../util/request-params";
-import Kinibind from "../framework/kinibind";
+import AuthKinibind from "../framework/auth-kinibind";
 
 
 export default class KaBind extends HTMLElement {
@@ -55,7 +55,7 @@ export default class KaBind extends HTMLElement {
         };
 
 
-        this.view = new Kinibind(this, data);
+        this.view = new AuthKinibind(this, data);
 
 
         if (source && !this.getAttribute("defer-load")) {
@@ -79,7 +79,7 @@ export default class KaBind extends HTMLElement {
 
         api.callAPI(url).then((results) => {
             results.json().then(model => {
-                this.view.setModelItem(this.getAttribute("data-model"), model);
+                this.view.model[this.getAttribute("data-model")] = model;
                 let event = new Event("sourceLoaded", {
                     "bubbles": true
                 });
