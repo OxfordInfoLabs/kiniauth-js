@@ -158,7 +158,7 @@ export default class KaFileUpload extends HTMLElement {
                 xhr.open("PUT", currentUpload.uploadUrl);
 
                 let reader = new FileReader();
-                reader.addEventListener("load", function (evt) {
+                reader.addEventListener("load", function (evt:any) {
                     xhr.send(evt.target.result);
                 });
 

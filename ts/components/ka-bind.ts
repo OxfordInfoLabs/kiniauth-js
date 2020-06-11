@@ -79,7 +79,7 @@ export default class KaBind extends HTMLElement {
 
         api.callAPI(url).then((results) => {
             results.json().then(model => {
-                this.view.setModelItem(this.getAttribute("data-model"), model);
+                this.view.model[this.getAttribute("data-model")] = model;
                 let event = new Event("sourceLoaded", {
                     "bubbles": true
                 });

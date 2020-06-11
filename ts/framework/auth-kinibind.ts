@@ -20,6 +20,7 @@ export default class AuthKinibind extends Kinibind {
         let coreParams = {
             session: {},
             request: RequestParams.get(),
+            state: {},
             now: new Date()
         };
 
@@ -32,7 +33,7 @@ export default class AuthKinibind extends Kinibind {
 
         // Pump in the session once loaded
         Session.getSessionData().then((session => {
-            this.setModelItem("session", session);
+            this.model.session = session;
         }));
 
     }

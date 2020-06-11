@@ -68,7 +68,7 @@ export default class KaDynamicForm extends HTMLElement {
 
                 let values = [];
 
-                let data = this.view.getModelItem("data");
+                let data = this.view.model.data;
 
                 if (data[key] instanceof Array) {
                     values = data[key];
@@ -181,7 +181,7 @@ export default class KaDynamicForm extends HTMLElement {
     private doSubmit(captchaResponse: string) {
 
 
-        let data = this.view.getModelItem("data");
+        let data = this.view.model.data;
 
         let submitUrl = this.getAttribute("data-submit-url");
 
@@ -252,7 +252,7 @@ export default class KaDynamicForm extends HTMLElement {
         let successUrl = this.getAttribute("data-success-url");
 
         if (successUrl) {
-           window.location.href = successUrl + (identifier ? "?identifier=" + identifier : "");
+            window.location.href = successUrl + (identifier ? "?identifier=" + identifier : "");
         } else {
             this.setButtonSpinStatus(false);
         }
@@ -268,7 +268,7 @@ export default class KaDynamicForm extends HTMLElement {
             return false;
         }
 
-        let data = this.view.getModelItem("data");
+        let data = this.view.model.data;
 
 
         this.querySelectorAll("[data-validation]").forEach((item) => {
@@ -310,21 +310,21 @@ export default class KaDynamicForm extends HTMLElement {
         }
 
 
-        let modelErrors = this.view.getModelItem("errors");
+        let modelErrors = this.view.model.errors;
 
         if (generateErrors) {
             if (Object.keys(modelErrors).length != Object.keys(errors).length) {
-                this.view.setModelItem("errors", errors);
+                this.view.model.errors = errors;
                 this.errorsGenerated = true;
             }
         } else {
 
             if (Object.keys(modelErrors).length != 0) {
-                this.view.setModelItem("errors", {});
+                this.view.model.errors = {};
             }
         }
 
-        this.view.setModelItem("valid", valid);
+        this.view.model.valid = valid;
 
         return valid;
     }
@@ -351,7 +351,7 @@ export default class KaDynamicForm extends HTMLElement {
      * @param value
      */
     protected setDataItem(key, value) {
-        let data = this.view.getModelItem("data");
+        let data = this.view.model.data;
         data[key] = value;
     }
 
@@ -362,7 +362,7 @@ export default class KaDynamicForm extends HTMLElement {
      * @param key
      */
     protected getDataItem(key) {
-        let data = this.view.getModelItem("data");
+        let data = this.view.model.data;
         return data[key];
     }
 }
