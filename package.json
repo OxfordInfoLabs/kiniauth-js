@@ -1,6 +1,6 @@
 {
   "name": "kiniauth",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "description": "Kiniauth Web Components",
   "main": "index.js",
   "files": [
@@ -28,8 +28,6 @@
   "homepage": "https://github.com/OxfordInfoLabs/kiniauth-js#readme",
   "devDependencies": {
     "@types/node": "^10.11.3",
-    "concurrently": "^4.1.0",
-    "node-sass": "^4.13.1",
     "source-map-loader": "0.2.3",
     "ts-loader": "^5.3.3",
     "typescript": "^3.4.1",
@@ -42,6 +40,6 @@
   },
   "dependencies": {
     "@webcomponents/custom-elements": "^1.2.2",
-    "kinibind": "0.0.62"
+    "kinibind": "0.0.63"
   }
 }
