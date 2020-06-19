@@ -112,8 +112,22 @@ export default class Api {
      * @param resetCode
      */
     public resetPassword(newPassword, resetCode, captcha) {
-        return this.callAPI('/guest/auth/passwordReset?captcha=' + captcha, {newPassword: newPassword, resetCode: resetCode}, 'POST');
+        return this.callAPI('/guest/auth/passwordReset?captcha=' + captcha, {
+            newPassword: newPassword,
+            resetCode: resetCode
+        }, 'POST');
     }
+
+
+    /**
+     * Unlock user
+     *
+     * @param unlockCode
+     */
+    public unlockUser(unlockCode) {
+        return this.callAPI('/guest/auth/unlockUser/' + unlockCode);
+    }
+
 
     public getSessionData() {
         return this.callAPI('/guest/session')
