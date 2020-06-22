@@ -9,16 +9,24 @@ export default class Api {
     /**
      * Login with username and password
      *
-     * @param username
+     * @param emailAddress
      * @param password
+     * @param captcha
      *
      * @return Promise
      */
     public login(emailAddress, password, captcha?) {
-        let url = '/guest/auth/login?emailAddress=' + emailAddress + '&password=' + encodeURIComponent(password);
-        if (captcha)
-            url += '&captcha=' + captcha;
-        return this.callAPI(url);
+        let url = '/guest/auth/login';
+        const params: any = {
+            emailAddress,
+            password: encodeURIComponent(password)
+        }
+
+        if (captcha) {
+            url += '?captcha=' + captcha;
+        }
+
+        return this.callAPI(url, params, 'POST');
     }
 
 
