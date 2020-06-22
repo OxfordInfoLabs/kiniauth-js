@@ -1,4 +1,5 @@
 import Configuration from '../configuration';
+import Session from "./session";
 
 /**
  * API methods for accessing backend via fetch
@@ -150,7 +151,7 @@ export default class Api {
     }
 
     public getContact(contactId) {
-        return this.callAPI('/account/contact/' + contactId)
+        return this.callAPI('/account/contact/' + contactId, true)
             .then((response) => {
                 if (response.ok) {
                     return response.text().then(function (text) {
@@ -166,7 +167,7 @@ export default class Api {
     }
 
     public saveContact(contact) {
-        return this.callAPI('/account/contact/save', contact, 'POST');
+        return this.callAPI('/account/contact/save', contact, 'POST', true);
     }
 
     /**
@@ -176,8 +177,19 @@ export default class Api {
      * @param params
      * @param method
      */
-    public callAPI(url: string, params: any = {}, method: string = 'GET') {
+    public callAPI(url: string, params: any = {}, method: string = 'GET', csrf: boolean = false) {
 
+        if (csrf) {
+            return Session.getSessionData().then(session => {
+                return this.makeAPICall(url, params, method, session)
+            });
+        } else {
+            return this.makeAPICall(url, params, method);
+        }
+
+    }
+
+    private makeAPICall(url: string, params: any = {}, method: string = 'GET', sessionData = null): Promise<Response> {
         if (url.indexOf("http") < 0)
             url = Configuration.endpoint + url;
 
@@ -186,6 +198,12 @@ export default class Api {
             credentials: 'include'
         };
 
+        if (sessionData) {
+            obj.headers = {
+                'X-CSRF-TOKEN': sessionData.csrfToken
+            };
+        }
+
         if (method != 'GET') {
             obj.body = JSON.stringify(params);
         }
@@ -193,5 +211,6 @@ export default class Api {
         return fetch(url, obj);
 
     }
+
 
 }
