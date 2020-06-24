@@ -198,8 +198,16 @@ export default class Api {
     }
 
     private makeAPICall(url: string, params: any = {}, method: string = 'GET', sessionData = null): Promise<Response> {
-        if (url.indexOf("http") < 0)
-            url = Configuration.endpoint + url;
+
+        if (url.indexOf("local:") == 0){
+            url = url.substr(6);
+        } else {
+
+            if (url.indexOf("http") < 0)
+                url = Configuration.endpoint + url;
+
+        }
+
 
         var obj: any = {
             method: method,

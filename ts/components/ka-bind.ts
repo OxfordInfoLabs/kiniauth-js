@@ -23,6 +23,27 @@ export default class KaBind extends HTMLElement {
     }
 
 
+    /**
+     * Get observed attributes
+     */
+    static get observedAttributes() {
+        return ['data-source'];
+    }
+
+
+    /**
+     * Changed callback
+     *
+     * @param name
+     * @param oldValue
+     * @param newValue
+     */
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name == 'data-source')
+            this.load();
+    }
+
+
     // Initialise
     private init() {
 
@@ -43,7 +64,11 @@ export default class KaBind extends HTMLElement {
                 let jsonModel = JSON.parse(model);
                 data = jsonModel ? jsonModel : {};
             } catch (e) {
-                data[model] = {};
+                if (this.getAttribute("data-raw-response")) {
+                    data[model] = "";
+                } else {
+                    data[model] = {};
+                }
             }
 
 
@@ -70,7 +95,6 @@ export default class KaBind extends HTMLElement {
 
         let url = this.getAttribute("data-source");
 
-
         url = url.replace(/\{request\.([a-zA-Z]+?)\}/g,
             (match, identifier): string => {
                 return RequestParams.get()[identifier];
@@ -78,13 +102,27 @@ export default class KaBind extends HTMLElement {
 
 
         api.callAPI(url).then((results) => {
-            results.json().then(model => {
-                this.view.model[this.getAttribute("data-model")] = model;
-                let event = new Event("sourceLoaded", {
-                    "bubbles": true
+
+            if (this.getAttribute("data-raw-response")) {
+
+                results.text().then(model => {
+                    this.view.model[this.getAttribute("data-model")] = model;
+                    let event = new Event("sourceLoaded", {
+                        "bubbles": true
+                    });
+                    this.dispatchEvent(event);
                 });
-                this.dispatchEvent(event);
-            });
+
+            } else {
+
+                results.json().then(model => {
+                    this.view.model[this.getAttribute("data-model")] = model;
+                    let event = new Event("sourceLoaded", {
+                        "bubbles": true
+                    });
+                    this.dispatchEvent(event);
+                });
+            }
 
         });
 
