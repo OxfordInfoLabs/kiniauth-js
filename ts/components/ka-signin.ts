@@ -12,6 +12,7 @@ export default class KaSignin extends StandardForm {
 
 
     private twoFactorURL = this.getAttribute("data-two-factor-url");
+    private closeSessionsURL = this.getAttribute("data-close-sessions-url");
 
     /**
      * Construct new element
@@ -54,6 +55,12 @@ export default class KaSignin extends StandardForm {
                 window.location.href = this.twoFactorURL + '?signinSuccessURL=' + signinSuccessURL;
             } else {
                 alert("No 2FA URL has been configured for two factor logins");
+            }
+        } else if (jsonResponse == 'ACTIVE_SESSION') {
+            if (this.closeSessionsURL) {
+                window.location.href = this.closeSessionsURL + '?twoFactorURL=' + this.twoFactorURL + '&signinSuccessURL=' + signinSuccessURL;
+            } else {
+                alert("No close sessions URL has been configured");
             }
         } else {
             window.location.href = signinSuccessURL;

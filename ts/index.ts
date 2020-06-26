@@ -17,6 +17,7 @@ import KaDynamicForm from "./components/ka-dynamic-form";
 import KaBind from "./components/ka-bind";
 import KaFileUpload from "./components/ka-file-upload";
 import KaUnlockUser from "./components/ka-unlock-user";
+import KaCloseSessions from "./components/ka-close-sessions";
 
 
 export default class Kiniauth {
@@ -55,6 +56,7 @@ export default class Kiniauth {
         customElements.define('ka-password-reset', KaPasswordReset);
         customElements.define('ka-new-password', KaNewPassword);
         customElements.define('ka-unlock-user', KaUnlockUser);
+        customElements.define('ka-close-sessions', KaCloseSessions);
         customElements.define('ka-register', KaRegister);
         customElements.define('ka-activate', KaActivate);
         customElements.define('ka-contact', KaContact);

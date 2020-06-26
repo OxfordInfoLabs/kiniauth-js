@@ -39,6 +39,14 @@ export default class Api {
 
 
     /**
+     * Close active sessions
+     */
+    public closeActiveSessions() {
+        return this.callAPI("/guest/auth/closeActiveSessions");
+    }
+
+
+    /**
      * Supply two factor code where accounts require it.
      *
      * @param code
@@ -199,7 +207,7 @@ export default class Api {
 
     private makeAPICall(url: string, params: any = {}, method: string = 'GET', sessionData = null): Promise<Response> {
 
-        if (url.indexOf("local:") == 0){
+        if (url.indexOf("local:") == 0) {
             url = url.substr(6);
         } else {
 
