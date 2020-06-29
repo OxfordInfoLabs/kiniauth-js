@@ -49,39 +49,32 @@ export default class KaBind extends HTMLElement {
 
 
         let model = this.getAttribute("data-model");
+
         let source = this.getAttribute("data-source");
+        let sourceKey = this.getAttribute("data-source-key");
 
-        if (typeof model != "object" && !model) {
-            alert("You must supply a model to a bind component");
-            return;
+
+        if (source && !sourceKey) {
+            alert("You must supply a source key when supplying a source for a bind");
         }
-
 
         let data: any = {};
 
+
+        // Handle both inline string and object models
         if (typeof model == "string") {
             try {
                 let jsonModel = JSON.parse(model);
                 data = jsonModel ? jsonModel : {};
             } catch (e) {
-                if (this.getAttribute("data-raw-response")) {
-                    data[model] = "";
-                } else {
-                    data[model] = {};
-                }
+                data = {};
             }
-
 
         } else if (typeof model == "object")
             data = model ? model : {};
 
-        data.load = () => {
-            this.load();
-        };
-
 
         this.view = new AuthKinibind(this, data);
-
 
         if (source && !this.getAttribute("defer-load")) {
             this.load();
@@ -106,7 +99,7 @@ export default class KaBind extends HTMLElement {
             if (this.getAttribute("data-raw-response")) {
 
                 results.text().then(model => {
-                    this.view.model[this.getAttribute("data-model")] = model;
+                    this.view.model[this.getAttribute("data-source-key")] = model;
                     let event = new Event("sourceLoaded", {
                         "bubbles": true
                     });
@@ -116,7 +109,7 @@ export default class KaBind extends HTMLElement {
             } else {
 
                 results.json().then(model => {
-                    this.view.model[this.getAttribute("data-model")] = model;
+                    this.view.model[this.getAttribute("data-source-key")] = model;
                     let event = new Event("sourceLoaded", {
                         "bubbles": true
                     });
