@@ -19,7 +19,6 @@ import KaFileUpload from "./components/ka-file-upload";
 import KaUnlockUser from "./components/ka-unlock-user";
 import KaCloseSessions from "./components/ka-close-sessions";
 
-
 export default class Kiniauth {
 
     constructor(params: any) {
@@ -63,7 +62,6 @@ export default class Kiniauth {
         customElements.define('ka-invitation', KaInvitation);
         customElements.define('ka-dynamic-form', KaDynamicForm);
         customElements.define('ka-file-upload', KaFileUpload);
-
 
     }
 

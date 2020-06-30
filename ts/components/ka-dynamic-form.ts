@@ -5,6 +5,7 @@ import Configuration from "../configuration";
 import ElementSpinner from "../util/element-spinner";
 import AuthKinibind from "../framework/auth-kinibind";
 import KaFileUpload from "./ka-file-upload";
+import Validation from "../framework/validation";
 
 
 /**
@@ -55,7 +56,8 @@ export default class KaDynamicForm extends HTMLElement {
             serverErrors: {},
             dateTime: new Date().toDateString() + " " + new Date().toLocaleTimeString(),
             date: new Date().toDateString(),
-            valid: false
+            valid: false,
+            submitted: false
         };
 
         model = {...extraData, ...model};
@@ -255,6 +257,7 @@ export default class KaDynamicForm extends HTMLElement {
             window.location.href = successUrl + (identifier ? "?identifier=" + identifier : "");
         } else {
             this.setButtonSpinStatus(false);
+            this.view.model.submitted = true;
         }
     }
 
@@ -270,7 +273,6 @@ export default class KaDynamicForm extends HTMLElement {
 
         let data = this.view.model.data;
 
-
         this.querySelectorAll("[data-validation]").forEach((item) => {
             let field = item.getAttribute("data-field");
             let validations = item.getAttribute("data-validation").split(",");
@@ -285,6 +287,9 @@ export default class KaDynamicForm extends HTMLElement {
                 switch (validation.trim()) {
                     case "required":
                         fieldValid = fieldValid && (dataValue instanceof Array ? dataValue.length > 0 : dataValue);
+                        break;
+                    case "email":
+                        fieldValid = fieldValid && (!dataValue || dataValue.match(Validation.emailRegexp));
                         break;
                     case "maxwords":
                         fieldValid = fieldValid && (!dataValue || dataValue.split(/\W/).length <= Number(item.getAttribute("data-max-words")));
@@ -313,15 +318,10 @@ export default class KaDynamicForm extends HTMLElement {
         let modelErrors = this.view.model.errors;
 
         if (generateErrors) {
-            if (Object.keys(modelErrors).length != Object.keys(errors).length) {
-                this.view.model.errors = errors;
-                this.errorsGenerated = true;
-            }
+            this.view.model.errors = errors;
+            this.errorsGenerated = true;
         } else {
-
-            if (Object.keys(modelErrors).length != 0) {
-                this.view.model.errors = {};
-            }
+            this.view.model.errors = {};
         }
 
         this.view.model.valid = valid;

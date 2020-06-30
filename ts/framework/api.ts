@@ -1,5 +1,7 @@
 import Configuration from '../configuration';
 import Session from "./session";
+import {sha512} from "js-sha512";
+import * as bcrypt from "bcryptjs";
 
 /**
  * API methods for accessing backend via fetch
@@ -16,17 +18,23 @@ export default class Api {
      * @return Promise
      */
     public login(emailAddress, password, captcha?) {
-        let url = '/guest/auth/login';
-        const params: any = {
-            emailAddress,
-            password: encodeURIComponent(password)
-        }
 
-        if (captcha) {
-            url += '?captcha=' + captcha;
-        }
+        return this.getSessionData().then((sessionData) => {
 
-        return this.callAPI(url, params, 'POST');
+            let url = '/guest/auth/login';
+
+            const params: any = {
+                emailAddress,
+                password: bcrypt.hashSync(sha512(password + emailAddress), "$2a$10$" + sessionData.sessionSalt)
+            }
+
+            if (captcha) {
+                url += '?captcha=' + captcha;
+            }
+
+            return this.callAPI(url, params, 'POST');
+        });
+
     }
 
 
@@ -167,7 +175,7 @@ export default class Api {
     }
 
     public getContact(contactId) {
-        return this.callAPI('/account/contact/' + contactId, true)
+        return this.callAPI('/account/contact/' + contactId)
             .then((response) => {
                 if (response.ok) {
                     return response.text().then(function (text) {
@@ -183,7 +191,7 @@ export default class Api {
     }
 
     public saveContact(contact) {
-        return this.callAPI('/account/contact/save', contact, 'POST', true);
+        return this.callAPI('/account/contact/save', contact, 'POST');
     }
 
     /**
@@ -193,7 +201,9 @@ export default class Api {
      * @param params
      * @param method
      */
-    public callAPI(url: string, params: any = {}, method: string = 'GET', csrf: boolean = false) {
+    public callAPI(url: string, params: any = {}, method: string = 'GET') {
+
+        let csrf = url.includes("/account/");
 
         if (csrf) {
             return Session.getSessionData().then(session => {
