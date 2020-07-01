@@ -24,7 +24,10 @@ export default class KaNewPassword extends StandardForm {
             }
         });
 
+
+
     }
+
 
     public submitForm(fieldValues: any): Promise<any> {
         let api = new Api();

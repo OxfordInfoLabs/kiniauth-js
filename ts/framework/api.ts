@@ -1,7 +1,8 @@
 import Configuration from '../configuration';
 import Session from "./session";
 import {sha512} from "js-sha512";
-import * as bcrypt from "bcryptjs";
+import bcrypt from "bcryptjs";
+import session from "./session";
 
 /**
  * API methods for accessing backend via fetch
@@ -25,7 +26,9 @@ export default class Api {
 
             const params: any = {
                 emailAddress,
-                password: bcrypt.hashSync(sha512(password + emailAddress), "$2a$10$" + sessionData.sessionSalt)
+                password: sessionData.sessionSalt ?
+                    bcrypt["hashSync"](sha512(password + emailAddress), "$2a$10$" + sessionData.sessionSalt) :
+                    password
             }
 
             if (captcha) {
@@ -72,15 +75,24 @@ export default class Api {
      * @param password
      */
     public createNewAccount(emailAddress, name, accountName, password, captcha, username = null, customFields = {}) {
-        return this.callAPI('/guest/registration/create?captcha=' + captcha, {
-            ...{
-                emailAddress: emailAddress,
-                name: name,
-                accountName: accountName,
-                password: password,
-                username: username
-            }, ...customFields
-        }, 'POST');
+
+        return this.getSessionData().then((sessionData) => {
+
+            let params = {
+                ...{
+                    emailAddress: emailAddress,
+                    name: name,
+                    accountName: accountName,
+                    username: username
+                }, ...customFields
+            };
+
+            // Modify the password if required
+            params["password"] = sessionData.sessionSalt ? sha512(password + emailAddress) : password;
+
+            return this.callAPI('/guest/registration/create?captcha=' + captcha, params, 'POST');
+
+        });
     }
 
 
@@ -135,12 +147,45 @@ export default class Api {
      *
      * @param newPassword
      * @param resetCode
+     *
+     * @return Promise
      */
     public resetPassword(newPassword, resetCode, captcha) {
-        return this.callAPI('/guest/auth/passwordReset?captcha=' + captcha, {
-            newPassword: newPassword,
-            resetCode: resetCode
-        }, 'POST');
+
+        return this.getSessionData().then((sessionData) => {
+
+            if (sessionData.sessionSalt) {
+
+                return this.callAPI('/guest/auth/passwordReset/' + resetCode).then(response => {
+
+                    if (response.ok) {
+
+                        return response.json().then(emailAddress => {
+
+                            return this.callAPI('/guest/auth/passwordReset?captcha=' + captcha, {
+                                newPassword: sha512(newPassword + emailAddress),
+                                resetCode: resetCode
+                            }, 'POST');
+
+                        });
+
+                    } else {
+                        return response;
+                    }
+
+                });
+
+            } else {
+
+                return this.callAPI('/guest/auth/passwordReset?captcha=' + captcha, {
+                    newPassword: newPassword,
+                    resetCode: resetCode
+                }, 'POST');
+            }
+
+        });
+
+
     }
 
 
@@ -203,7 +248,7 @@ export default class Api {
      */
     public callAPI(url: string, params: any = {}, method: string = 'GET') {
 
-        let csrf = url.includes("/account/");
+        let csrf = url.indexOf("/account/") == 0;
 
         if (csrf) {
             return Session.getSessionData().then(session => {
@@ -241,6 +286,7 @@ export default class Api {
         if (method != 'GET') {
             obj.body = JSON.stringify(params);
         }
+
 
         return fetch(url, obj);
 
