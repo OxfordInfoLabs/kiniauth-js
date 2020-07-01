@@ -1,6 +1,6 @@
 {
   "name": "kiniauth",
-  "version": "0.0.30",
+  "version": "0.0.33",
   "description": "Kiniauth Web Components",
   "main": "index.js",
   "files": [
@@ -42,8 +42,7 @@
   },
   "dependencies": {
     "@webcomponents/custom-elements": "^1.2.2",
-    "bcryptjs": "^2.4.3",
     "js-sha512": "^0.8.0",
-    "kinibind": "0.0.73"
+    "kinibind": "0.0.77"
   }
 }

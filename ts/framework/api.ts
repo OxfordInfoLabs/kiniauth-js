@@ -1,8 +1,6 @@
 import Configuration from '../configuration';
 import Session from "./session";
 import {sha512} from "js-sha512";
-import bcrypt from "bcryptjs";
-import session from "./session";
 
 /**
  * API methods for accessing backend via fetch
@@ -27,7 +25,7 @@ export default class Api {
             const params: any = {
                 emailAddress,
                 password: sessionData.sessionSalt ?
-                    bcrypt["hashSync"](sha512(password + emailAddress), "$2a$10$" + sessionData.sessionSalt) :
+                    sha512(sha512(password + emailAddress) + sessionData.sessionSalt) :
                     password
             }
 
@@ -37,6 +35,7 @@ export default class Api {
 
             return this.callAPI(url, params, 'POST');
         });
+
 
     }
 
