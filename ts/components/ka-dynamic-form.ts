@@ -298,7 +298,7 @@ export default class KaDynamicForm extends HTMLElement {
                         fieldValid = fieldValid && (!dataValue || dataValue.match(Validation.emailRegexp));
                         break;
                     case "date":
-                        fieldValid = fieldValid && (!dataValue || (dayjs(dataValue, item.getAttribute("date-format") ? item.getAttribute("date-format") : 'YYYY-MM-DD', true).isValid()));
+                        fieldValid = fieldValid && (!dataValue || (dayjs(dataValue, item.getAttribute("date-format") ? item.getAttribute("date-format") : 'YYYY-MM-DD').isValid()));
                         break;
                     case "maxwords":
                         fieldValid = fieldValid && (!dataValue || dataValue.split(/\W/).length <= Number(item.getAttribute("data-max-words")));
