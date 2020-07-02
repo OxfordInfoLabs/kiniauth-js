@@ -127,6 +127,7 @@ export default abstract class StandardForm extends HTMLElement {
 
                     }).catch((response) => {
 
+
                         response.json().then((jsonData) => {
                             if (this.recaptcha)
                                 this.recaptcha.render();

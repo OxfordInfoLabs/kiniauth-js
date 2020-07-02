@@ -100,9 +100,8 @@ export default class KaBind extends HTMLElement {
 
                 results.text().then(model => {
                     this.view.model[this.getAttribute("data-source-key")] = model;
-                    let event = new Event("sourceLoaded", {
-                        "bubbles": true
-                    });
+                    let event = document.createEvent("Event");
+                    event.initEvent("sourceLoaded", false, true);
                     this.dispatchEvent(event);
                 });
 
@@ -110,9 +109,8 @@ export default class KaBind extends HTMLElement {
 
                 results.json().then(model => {
                     this.view.model[this.getAttribute("data-source-key")] = model;
-                    let event = new Event("sourceLoaded", {
-                        "bubbles": true
-                    });
+                    let event = document.createEvent("Event");
+                    event.initEvent("sourceLoaded", false, true);
                     this.dispatchEvent(event);
                 });
             }

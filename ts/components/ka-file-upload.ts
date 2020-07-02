@@ -47,7 +47,10 @@ export default class KaFileUpload extends HTMLElement {
 
             this.uploaded = false;
 
-            this.dispatchEvent(new Event("input"));
+            let event = document.createEvent("Event");
+            event.initEvent("input", false, true);
+            this.dispatchEvent(event);
+
         });
 
 
@@ -125,7 +128,9 @@ export default class KaFileUpload extends HTMLElement {
                             });
 
                             this.uploadAllFiles(result, 0).then(() => {
-                                this.dispatchEvent(new Event("input"));
+                                let event = document.createEvent("Event");
+                                event.initEvent("input", false, true);
+                                this.dispatchEvent(event);
                                 done();
                             }).catch(() => {
                                 reject("File upload failed");

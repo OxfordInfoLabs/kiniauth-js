@@ -6,6 +6,8 @@ import ElementSpinner from "../util/element-spinner";
 import AuthKinibind from "../framework/auth-kinibind";
 import KaFileUpload from "./ka-file-upload";
 import Validation from "../framework/validation";
+import * as dayjs from "dayjs";
+import * as customParseFormat from 'dayjs/plugin/customParseFormat';
 
 
 /**
@@ -23,6 +25,10 @@ export default class KaDynamicForm extends HTMLElement {
     constructor(extraData = {}, extraMethods = {}) {
 
         super();
+
+        // Extend dayjs with custom parse format
+        dayjs.extend(customParseFormat);
+
         this.init(extraData, extraMethods);
 
     }
@@ -290,6 +296,9 @@ export default class KaDynamicForm extends HTMLElement {
                         break;
                     case "email":
                         fieldValid = fieldValid && (!dataValue || dataValue.match(Validation.emailRegexp));
+                        break;
+                    case "date":
+                        fieldValid = fieldValid && (!dataValue || (dayjs(dataValue, item.getAttribute("date-format") ? item.getAttribute("date-format") : 'YYYY-MM-DD', true).isValid()));
                         break;
                     case "maxwords":
                         fieldValid = fieldValid && (!dataValue || dataValue.split(/\W/).length <= Number(item.getAttribute("data-max-words")));

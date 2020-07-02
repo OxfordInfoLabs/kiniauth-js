@@ -32,7 +32,7 @@ export default class ElementSpinner {
     static restoreElement(element: HTMLElement) {
 
         // Remove the spinner.
-        element.previousElementSibling.remove();
+        element.parentNode.removeChild(element.previousElementSibling);
 
         Configuration.elementVisibilityFunction(element, true);
     }
