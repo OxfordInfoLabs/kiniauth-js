@@ -18,7 +18,7 @@ export default class Api {
      */
     public login(emailAddress, password, captcha?) {
 
-        return this.getSessionData().then((sessionData) => {
+        return Session.getSessionData().then((sessionData) => {
 
             let url = '/guest/auth/login';
 
@@ -75,7 +75,7 @@ export default class Api {
      */
     public createNewAccount(emailAddress, name, accountName, password, captcha, username = null, customFields = {}) {
 
-        return this.getSessionData().then((sessionData) => {
+        return Session.getSessionData().then((sessionData) => {
 
             let params = {
                 ...{
@@ -151,7 +151,7 @@ export default class Api {
      */
     public resetPassword(newPassword, resetCode, captcha) {
 
-        return this.getSessionData().then((sessionData) => {
+        return Session.getSessionData().then((sessionData) => {
 
             if (sessionData.sessionSalt) {
 
@@ -286,7 +286,10 @@ export default class Api {
             obj.body = JSON.stringify(params);
         }
 
+        // Clear session data after any API call
+        Session.clearSessionData();
 
+        // Return results
         return fetch(url, obj);
 
     }
