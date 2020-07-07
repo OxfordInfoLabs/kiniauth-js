@@ -112,12 +112,9 @@ export default class KaFileUpload extends HTMLElement {
 
                 let api = new Api();
 
-                if (captcha)
-                    uploadUrlProvider += "?captcha=" + captcha;
-
                 api.callAPI(uploadUrlProvider,
                     this.values
-                    , "POST").then((response) => {
+                    , "POST",captcha).then((response) => {
 
                     if (response.ok) {
 

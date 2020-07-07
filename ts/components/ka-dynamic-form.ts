@@ -193,14 +193,10 @@ export default class KaDynamicForm extends HTMLElement {
 
         let submitUrl = this.getAttribute("data-submit-url");
 
-        if (captchaResponse) {
-            submitUrl += "?captcha=" + captchaResponse;
-        }
-
 
         if (submitUrl) {
             let api = new Api();
-            api.callAPI(submitUrl, data, "POST").then((response) => {
+            api.callAPI(submitUrl, data, "POST",captchaResponse).then((response) => {
 
                 response.json().then((data) => {
 

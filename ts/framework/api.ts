@@ -29,11 +29,8 @@ export default class Api {
                     password
             }
 
-            if (captcha) {
-                url += '?captcha=' + captcha;
-            }
 
-            return this.callAPI(url, params, 'POST');
+            return this.callAPI(url, params, 'POST', captcha);
         });
 
 
@@ -89,7 +86,7 @@ export default class Api {
             // Modify the password if required
             params["password"] = sessionData.sessionSalt ? sha512(password + emailAddress) : password;
 
-            return this.callAPI('/guest/registration/create?captcha=' + captcha, params, 'POST');
+            return this.callAPI('/guest/registration/create', params, 'POST', captcha);
 
         });
     }
@@ -137,7 +134,7 @@ export default class Api {
      * @param emailAddress
      */
     public requestPasswordReset(emailAddress, captcha) {
-        return this.callAPI('/guest/auth/passwordReset?emailAddress=' + emailAddress + '&captcha=' + captcha);
+        return this.callAPI('/guest/auth/passwordReset?emailAddress=' + emailAddress, {}, 'GET', captcha);
     }
 
 
@@ -161,10 +158,10 @@ export default class Api {
 
                         return response.json().then(emailAddress => {
 
-                            return this.callAPI('/guest/auth/passwordReset?captcha=' + captcha, {
+                            return this.callAPI('/guest/auth/passwordReset', {
                                 newPassword: sha512(newPassword + emailAddress),
                                 resetCode: resetCode
-                            }, 'POST');
+                            }, 'POST', captcha);
 
                         });
 
@@ -176,10 +173,10 @@ export default class Api {
 
             } else {
 
-                return this.callAPI('/guest/auth/passwordReset?captcha=' + captcha, {
+                return this.callAPI('/guest/auth/passwordReset', {
                     newPassword: newPassword,
                     resetCode: resetCode
-                }, 'POST');
+                }, 'POST', captcha);
             }
 
         });
@@ -245,21 +242,21 @@ export default class Api {
      * @param params
      * @param method
      */
-    public callAPI(url: string, params: any = {}, method: string = 'GET') {
+    public callAPI(url: string, params: any = {}, method: string = 'GET', captcha: string = null) {
 
         let csrf = url.indexOf("/account/") == 0;
 
         if (csrf) {
             return Session.getSessionData().then(session => {
-                return this.makeAPICall(url, params, method, session)
+                return this.makeAPICall(url, params, method, session, captcha)
             });
         } else {
-            return this.makeAPICall(url, params, method);
+            return this.makeAPICall(url, params, method, null, captcha);
         }
 
     }
 
-    private makeAPICall(url: string, params: any = {}, method: string = 'GET', sessionData = null): Promise<Response> {
+    private makeAPICall(url: string, params: any = {}, method: string = 'GET', sessionData = null, captcha = null): Promise<Response> {
 
         if (url.indexOf("local:") == 0) {
             url = url.substr(6);
@@ -280,6 +277,16 @@ export default class Api {
             obj.headers = {
                 'X-CSRF-TOKEN': sessionData.csrfToken
             };
+        }
+
+        if (captcha) {
+            if (obj.headers) {
+                obj.headers['X-CAPTCHA-TOKEN'] = captcha;
+            } else {
+                obj.headers = {
+                    'X-CAPTCHA-TOKEN': captcha
+                }
+            }
         }
 
         if (method != 'GET') {
