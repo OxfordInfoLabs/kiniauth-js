@@ -1,5 +1,6 @@
 import Api from "./api";
 import * as dayjs from "dayjs";
+import RequestParams from "../util/request-params";
 
 export default class Session {
 
@@ -13,11 +14,13 @@ export default class Session {
             let api = new Api();
             this.sessionData = new Promise<any>(done => {
 
+                let sessionReload = RequestParams.get()["sessionReload"];
+
                 let sessionData = sessionStorage.getItem("kaSession");
                 let sessionExpiry = sessionStorage.getItem("kaSessionExpiry");
                 let now = dayjs().format('YYYY-MM-DD HH:mm:ss');
 
-                if (!sessionData || sessionExpiry < now) {
+                if (sessionReload || !sessionData || sessionExpiry < now) {
                     api.getSessionData().then(sessionData => {
 
                         // Store data
