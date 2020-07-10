@@ -31,10 +31,11 @@ export default class AuthKinibind extends Kinibind {
         super(element, model);
 
 
-        // Pump in the session once loaded
-        Session.getSessionData().then((session => {
-            this.model.session = session;
-        }));
+        // Pump in the session once loaded provided we are not inheriting
+        if (!model["_kinibindInherit"])
+            Session.getSessionData().then((session => {
+                this.model.session = session;
+            }));
 
     }
 

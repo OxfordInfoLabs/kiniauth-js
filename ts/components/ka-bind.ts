@@ -39,7 +39,10 @@ export default class KaBind extends HTMLElement {
      * @param newValue
      */
     attributeChangedCallback(name, oldValue, newValue) {
-        if (name == 'data-source')
+
+        console.log(newValue);
+
+        if (name == 'data-source' && newValue)
             this.load();
     }
 
@@ -98,12 +101,15 @@ export default class KaBind extends HTMLElement {
 
             if (this.getAttribute("data-raw-response")) {
 
-                results.text().then(model => {
-                    this.view.model[this.getAttribute("data-source-key")] = model;
-                    let event = document.createEvent("Event");
-                    event.initEvent("sourceLoaded", false, true);
-                    this.dispatchEvent(event);
-                });
+                if (results.ok) {
+
+                    results.text().then(model => {
+                        this.view.model[this.getAttribute("data-source-key")] = model;
+                        let event = document.createEvent("Event");
+                        event.initEvent("sourceLoaded", false, true);
+                        this.dispatchEvent(event);
+                    });
+                }
 
             } else {
 
