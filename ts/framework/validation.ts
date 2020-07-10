@@ -21,6 +21,7 @@ export default class Validation {
             this.setFieldError(containingElement, item, false, "");
         });
 
+
     }
 
 
@@ -196,9 +197,7 @@ export default class Validation {
 
             let valid = recaptcha.getResponse() ? true : false;
 
-            if (!valid) {
-                this.setFieldError(containingElement, "recaptcha", true, message);
-            }
+            this.setFieldError(containingElement, "recaptcha", !valid, message);
 
             return valid;
         } else {

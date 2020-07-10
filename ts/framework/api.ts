@@ -261,7 +261,10 @@ export default class Api {
 
     private makeAPICall(url: string, params: any = {}, method: string = 'GET', sessionData = null, captcha = null): Promise<Response> {
 
+        let local = false;
+
         if (url.indexOf("local:") == 0) {
+            local = true;
             url = url.substr(6);
         } else {
 
@@ -297,7 +300,8 @@ export default class Api {
         }
 
         // Clear session data after any API call
-        Session.clearSessionData();
+        if (!local)
+            Session.clearSessionData();
 
         // Return results
         return fetch(url, obj);
