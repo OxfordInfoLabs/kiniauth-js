@@ -40,8 +40,6 @@ export default class KaBind extends HTMLElement {
      */
     attributeChangedCallback(name, oldValue, newValue) {
 
-        console.log(newValue);
-
         if (name == 'data-source' && newValue)
             this.load();
     }
