@@ -18,6 +18,9 @@ export default class Api {
      */
     public login(emailAddress, password, captcha?) {
 
+        // Clear session data to ensure we get a consistent cookie
+        Session.clearSessionData();
+
         return Session.getSessionData().then((sessionData) => {
 
             let url = '/guest/auth/login';

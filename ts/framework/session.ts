@@ -47,6 +47,8 @@ export default class Session {
      */
     public static clearSessionData() {
         sessionStorage.removeItem("kaSession");
+        sessionStorage.removeItem("kaSessionExpiry");
+        this.sessionData = null;
     }
 
 }

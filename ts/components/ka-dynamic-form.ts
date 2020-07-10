@@ -196,7 +196,7 @@ export default class KaDynamicForm extends HTMLElement {
 
         if (submitUrl) {
             let api = new Api();
-            api.callAPI(submitUrl, data, "POST",captchaResponse).then((response) => {
+            api.callAPI(submitUrl, data, "POST", captchaResponse).then((response) => {
 
                 response.json().then((data) => {
 
@@ -260,6 +260,12 @@ export default class KaDynamicForm extends HTMLElement {
         } else {
             this.setButtonSpinStatus(false);
             this.view.model.submitted = true;
+
+            let successModel = this.getAttribute("data-success-model");
+            if (successModel) {
+                this.view.model[successModel] = identifier;
+            }
+
         }
     }
 
