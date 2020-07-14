@@ -1,6 +1,6 @@
 {
   "name": "kiniauth",
-  "version": "0.0.40",
+  "version": "0.0.41",
   "description": "Kiniauth Web Components",
   "main": "index.js",
   "files": [
@@ -43,7 +43,7 @@
   "dependencies": {
     "@webcomponents/custom-elements": "^1.2.2",
     "js-sha512": "^0.8.0",
-    "kinibind": "0.0.84",
+    "kinibind": "0.0.86",
     "whatwg-fetch": "github:github/fetch"
   }
 }

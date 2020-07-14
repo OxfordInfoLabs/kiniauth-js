@@ -1,4 +1,4 @@
-/**
+ /**
  * Generic binder which binds a model to an AJAX source.  A source and model must be supplied in the form
  * of data attributes (data-source and data-model) and optionally a defer-load attribute may be supplied to allow
  * for event driven loading and reloading later.

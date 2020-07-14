@@ -258,7 +258,14 @@ export default class KaDynamicForm extends HTMLElement {
         if (successUrl) {
             window.location.href = successUrl + (identifier ? "?identifier=" + identifier : "");
         } else {
+
             this.setButtonSpinStatus(false);
+
+            let captcha = <KaRecaptcha>this.querySelector(Configuration.componentPrefix + "-recaptcha");
+            if (captcha) {
+                captcha.reset();
+            }
+
             this.view.model.submitted = true;
 
             let successModel = this.getAttribute("data-success-model");
