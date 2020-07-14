@@ -59,7 +59,7 @@ export default class KaDynamicForm extends HTMLElement {
         let model = {
             data: data,
             errors: {},
-            serverErrors: {},
+            serverErrors: null,
             dateTime: new Date().toDateString() + " " + new Date().toLocaleTimeString(),
             date: new Date().toDateString(),
             valid: false,
@@ -141,6 +141,7 @@ export default class KaDynamicForm extends HTMLElement {
 
         // Spin the button
         this.setButtonSpinStatus(true);
+        this.view.model.serverErrors = null;
 
         let fileUploaders = this.querySelectorAll(Configuration.componentPrefix + "-file-upload");
         if (fileUploaders.length > 0) {
@@ -153,7 +154,13 @@ export default class KaDynamicForm extends HTMLElement {
             this.processFileUploaders(fileUploaderArray, captchaResponse).then(() => {
                 this.doSubmit(captchaResponse);
             }).catch((e) => {
-                alert(e);
+                this.view.model.serverErrors = {
+                    "general": {
+                        "error": {
+                            "errorMessage": e.message
+                        }
+                    }
+                };
                 this.setButtonSpinStatus(false);
             })
 
@@ -211,7 +218,7 @@ export default class KaDynamicForm extends HTMLElement {
                             serverErrors = data.validationErrors;
                         } else {
                             serverErrors = {
-                                "global": {
+                                "general": {
                                     "error": {
                                         "errorMessage": data.message
                                     }
@@ -219,15 +226,7 @@ export default class KaDynamicForm extends HTMLElement {
                             };
                         }
 
-                        let errorString = "The following unexpected errors occurred:\n";
-                        for (var field in serverErrors) {
-                            let typedErrors = serverErrors[field];
-                            for (var type in typedErrors) {
-                                errorString += "\n" + typedErrors[type]["errorMessage"];
-                            }
-                        }
-
-                        alert(errorString);
+                        this.view.model.serverErrors = serverErrors;
 
                         this.setButtonSpinStatus(false);
 

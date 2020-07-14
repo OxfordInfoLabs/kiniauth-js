@@ -1,4 +1,4 @@
- /**
+/**
  * Generic binder which binds a model to an AJAX source.  A source and model must be supplied in the form
  * of data attributes (data-source and data-model) and optionally a defer-load attribute may be supplied to allow
  * for event driven loading and reloading later.
@@ -97,11 +97,22 @@ export default class KaBind extends HTMLElement {
 
         api.callAPI(url).then((results) => {
 
-            if (this.getAttribute("data-raw-response")) {
+            if (results.ok) {
 
-                if (results.ok) {
+                if (this.getAttribute("data-raw-response")) {
+
 
                     results.text().then(model => {
+                        this.view.model[this.getAttribute("data-source-key")] = model;
+                        let event = document.createEvent("Event");
+                        event.initEvent("sourceLoaded", false, true);
+                        this.dispatchEvent(event);
+                    });
+
+
+                } else {
+
+                    results.json().then(model => {
                         this.view.model[this.getAttribute("data-source-key")] = model;
                         let event = document.createEvent("Event");
                         event.initEvent("sourceLoaded", false, true);
@@ -111,12 +122,16 @@ export default class KaBind extends HTMLElement {
 
             } else {
 
-                results.json().then(model => {
-                    this.view.model[this.getAttribute("data-source-key")] = model;
-                    let event = document.createEvent("Event");
-                    event.initEvent("sourceLoaded", false, true);
-                    this.dispatchEvent(event);
-                });
+                if (this.getAttribute("data-raw-response")) {
+                    results.text().then(model => {
+                        this.view.model[this.getAttribute("data-source-key") + "Error"] = model;
+                    });
+                } else {
+                    results.json().then(model => {
+                        this.view.model[this.getAttribute("data-source-key") + "Error"] = model;
+                    });
+                }
+
             }
 
         });
