@@ -9,6 +9,7 @@
 import Api from "../framework/api";
 import RequestParams from "../util/request-params";
 import AuthKinibind from "../framework/auth-kinibind";
+import AuthArrayProxy from "../proxy/auth-array-proxy";
 
 
 export default class KaBind extends HTMLElement {
@@ -85,56 +86,65 @@ export default class KaBind extends HTMLElement {
 
     // Load the source
     private load() {
-        let api = new Api();
 
         let url = this.getAttribute("data-source");
-
         url = url.replace(/\{request\.([a-zA-Z]+?)\}/g,
             (match, identifier): string => {
                 return RequestParams.get()[identifier];
             });
 
 
-        api.callAPI(url).then((results) => {
+        let sourceKey = this.getAttribute("data-source-key");
 
-            if (results.ok) {
+        if (this.getAttribute("data-proxy")) {
 
-                if (this.getAttribute("data-raw-response")) {
+            this.view.model[sourceKey] = AuthArrayProxy.create(url);
+
+        } else {
+
+            let api = new Api();
+
+            api.callAPI(url).then((results) => {
+
+                if (results.ok) {
+
+                    if (this.getAttribute("data-raw-response")) {
 
 
-                    results.text().then(model => {
-                        this.view.model[this.getAttribute("data-source-key")] = model;
-                        let event = document.createEvent("Event");
-                        event.initEvent("sourceLoaded", false, true);
-                        this.dispatchEvent(event);
-                    });
+                        results.text().then(model => {
+                            this.view.model[sourceKey] = model;
+                            let event = document.createEvent("Event");
+                            event.initEvent("sourceLoaded", false, true);
+                            this.dispatchEvent(event);
+                        });
 
+
+                    } else {
+
+                        results.json().then(model => {
+                            this.view.model[sourceKey] = model;
+                            let event = document.createEvent("Event");
+                            event.initEvent("sourceLoaded", false, true);
+                            this.dispatchEvent(event);
+                        });
+                    }
 
                 } else {
 
-                    results.json().then(model => {
-                        this.view.model[this.getAttribute("data-source-key")] = model;
-                        let event = document.createEvent("Event");
-                        event.initEvent("sourceLoaded", false, true);
-                        this.dispatchEvent(event);
-                    });
+                    if (this.getAttribute("data-raw-response")) {
+                        results.text().then(model => {
+                            this.view.model[sourceKey + "Error"] = model;
+                        });
+                    } else {
+                        results.json().then(model => {
+                            this.view.model[sourceKey + "Error"] = model;
+                        });
+                    }
+
                 }
 
-            } else {
-
-                if (this.getAttribute("data-raw-response")) {
-                    results.text().then(model => {
-                        this.view.model[this.getAttribute("data-source-key") + "Error"] = model;
-                    });
-                } else {
-                    results.json().then(model => {
-                        this.view.model[this.getAttribute("data-source-key") + "Error"] = model;
-                    });
-                }
-
-            }
-
-        });
+            });
+        }
 
 
     }

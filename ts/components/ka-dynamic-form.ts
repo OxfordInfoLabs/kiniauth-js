@@ -6,7 +6,9 @@ import ElementSpinner from "../util/element-spinner";
 import AuthKinibind from "../framework/auth-kinibind";
 import KaFileUpload from "./ka-file-upload";
 import Validation from "../framework/validation";
+// @ts-ignore
 import * as dayjs from "dayjs";
+// @ts-ignore
 import * as customParseFormat from 'dayjs/plugin/customParseFormat';
 
 
